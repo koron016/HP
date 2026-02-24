@@ -1,0 +1,22 @@
+{
+  "name": "x-auto-posting-system",
+  "version": "1.0.0",
+  "description": "X（旧Twitter）自動投稿システム",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "post": "node src/cli.js post",
+    "schedule": "node src/cli.js schedule",
+    "list": "node src/cli.js list",
+    "daemon": "node src/scheduler.js"
+  },
+  "keywords": ["twitter", "x", "auto-post", "scheduler"],
+  "license": "MIT",
+  "dependencies": {
+    "twitter-api-v2": "^1.17.2",
+    "node-cron": "^3.0.3",
+    "dotenv": "^16.4.7",
+    "commander": "^12.1.0",
+    "better-sqlite3": "^11.7.0"
+  }
+}
