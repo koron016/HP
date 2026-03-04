@@ -10,7 +10,7 @@ This file provides guidance to AI assistants (e.g. Claude Code) working in this 
 
 - **言語**: Python 3
 - **フレームワーク**: Flask
-- **AI**: Claude API (Anthropic) — 台本生成
+- **台本生成**: テンプレートベース（API不要・完全無料）
 - **動画生成**: Pillow (画像) + gTTS (音声) + moviepy/FFmpeg (動画合成)
 
 **Remote:** `http://local_proxy@127.0.0.1:31504/git/koron016/HP`
@@ -84,7 +84,7 @@ Since the project is not yet defined, the following is a recommended baseline wo
 ```
 HP/
 ├── app.py                  # Flask アプリ（エントリーポイント）
-├── script_generator.py     # Claude API で台本生成
+├── script_generator.py     # テンプレートベース台本生成（API不要）
 ├── video_generator.py      # 画像・音声・動画合成エンジン
 ├── requirements.txt        # Python 依存パッケージ
 ├── .env.example            # 環境変数テンプレート
@@ -102,15 +102,13 @@ HP/
 
 ```bash
 pip install -r requirements.txt
-cp .env.example .env
-# .env に ANTHROPIC_API_KEY を設定
 python app.py
 # http://localhost:5000 でアクセス
 ```
 
 ### 必要な環境変数
 
-- `ANTHROPIC_API_KEY` — Anthropic API キー
+なし（完全無料で動作します）
 
 ### 日本語フォント（任意）
 

@@ -1,7 +1,6 @@
 import os
 import uuid
-import json
-from flask import Flask, render_template, request, jsonify, send_from_directory
+from flask import Flask, render_template, request, jsonify
 from video_generator import generate_video
 from script_generator import generate_lifehack_script
 
@@ -24,12 +23,8 @@ def api_generate():
     if not topic:
         return jsonify({"error": "トピックを入力してください"}), 400
 
-    api_key = os.environ.get("ANTHROPIC_API_KEY", "")
-    if not api_key:
-        return jsonify({"error": "ANTHROPIC_API_KEYが設定されていません"}), 500
-
     try:
-        script = generate_lifehack_script(api_key, topic, style)
+        script = generate_lifehack_script(topic, style)
     except Exception as e:
         return jsonify({"error": f"台本生成に失敗しました: {e}"}), 500
 
@@ -57,12 +52,8 @@ def api_script_preview():
     if not topic:
         return jsonify({"error": "トピックを入力してください"}), 400
 
-    api_key = os.environ.get("ANTHROPIC_API_KEY", "")
-    if not api_key:
-        return jsonify({"error": "ANTHROPIC_API_KEYが設定されていません"}), 500
-
     try:
-        script = generate_lifehack_script(api_key, topic, style)
+        script = generate_lifehack_script(topic, style)
         return jsonify({"script": script})
     except Exception as e:
         return jsonify({"error": f"台本生成に失敗しました: {e}"}), 500
