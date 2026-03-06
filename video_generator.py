@@ -1,13 +1,14 @@
 import os
 import textwrap
+import numpy as np
 from PIL import Image, ImageDraw, ImageFont
 from gtts import gTTS
 from moviepy import (
     ImageClip,
     AudioFileClip,
-    TextClip,
     CompositeVideoClip,
     concatenate_videoclips,
+    vfx,
 )
 
 
@@ -29,6 +30,11 @@ COLORS = {
 }
 
 FONT_DIR = os.path.join(os.path.dirname(__file__), "static", "fonts")
+
+# トランジション・アニメーション設定
+FADE_DURATION = 0.5  # フェードイン・アウトの長さ(秒)
+ZOOM_RATIO = 0.08  # Ken Burns ズーム量 (8%)
+PAN_PIXELS = 40  # パンの移動ピクセル数
 
 
 def _get_font(size: int, bold: bool = False) -> ImageFont.FreeTypeFont:
@@ -111,7 +117,7 @@ def _create_hook_frame(hook_text: str) -> Image.Image:
 
     # 下部に小さいテキスト
     small_font = _get_font(36)
-    tip = "👆 最後まで見てね！"
+    tip = "最後まで見てね！"
     bbox2 = draw.textbbox((0, 0), tip, font=small_font)
     tw2 = bbox2[2] - bbox2[0]
     draw.text(((WIDTH - tw2) // 2, HEIGHT - 250), tip, font=small_font, fill=COLORS["accent_yellow"])
@@ -202,7 +208,7 @@ def _create_outro_frame(outro_text: str) -> Image.Image:
 
     # CTA
     cta_font = _get_font(48)
-    cta = "❤️ いいね & フォローよろしく！"
+    cta = "いいね＆フォローよろしく！"
     bbox2 = draw.textbbox((0, 0), cta, font=cta_font)
     cw = bbox2[2] - bbox2[0]
     draw.text(((WIDTH - cw) // 2, HEIGHT // 2 + 100), cta, font=cta_font, fill=COLORS["text_white"])
@@ -215,6 +221,107 @@ def _generate_tts(text: str, output_path: str) -> str:
     tts = gTTS(text=text, lang="ja", slow=False)
     tts.save(output_path)
     return output_path
+
+
+def _apply_ken_burns(clip, duration, direction="zoom_in"):
+    """Ken Burns効果（ズーム＋パン）を適用して動きのある映像にする。
+
+    大きめの画像からクロップしてズーム・パンをシミュレートする。
+    """
+    w, h = clip.size
+
+    # 余白を持たせるためにリサイズ（少し大きくする）
+    margin = ZOOM_RATIO
+    scale_start = 1.0 + margin
+    scale_end = 1.0
+
+    if direction == "zoom_in":
+        scale_start, scale_end = 1.0, 1.0 + margin
+    elif direction == "zoom_out":
+        scale_start, scale_end = 1.0 + margin, 1.0
+    elif direction == "pan_left":
+        scale_start = scale_end = 1.0 + margin
+
+    # 拡大した画像を作成
+    big_w = int(w * (1.0 + margin))
+    big_h = int(h * (1.0 + margin))
+    resized_clip = clip.resized((big_w, big_h))
+
+    def make_frame_func(get_frame):
+        def new_get_frame(t):
+            progress = t / duration if duration > 0 else 0
+            progress = min(progress, 1.0)
+
+            if direction in ("zoom_in", "zoom_out"):
+                current_scale = scale_start + (scale_end - scale_start) * progress
+                crop_w = int(w / current_scale * (1.0 + margin))
+                crop_h = int(h / current_scale * (1.0 + margin))
+                # 中心からクロップ
+                cx, cy = big_w // 2, big_h // 2
+                x1 = max(0, cx - crop_w // 2)
+                y1 = max(0, cy - crop_h // 2)
+                x2 = min(big_w, x1 + crop_w)
+                y2 = min(big_h, y1 + crop_h)
+            elif direction == "pan_left":
+                crop_w, crop_h = w, h
+                max_offset = big_w - w
+                x_offset = int(max_offset * (1 - progress))
+                x1 = x_offset
+                y1 = (big_h - h) // 2
+                x2 = x1 + crop_w
+                y2 = y1 + crop_h
+            elif direction == "pan_right":
+                crop_w, crop_h = w, h
+                max_offset = big_w - w
+                x_offset = int(max_offset * progress)
+                x1 = x_offset
+                y1 = (big_h - h) // 2
+                x2 = x1 + crop_w
+                y2 = y1 + crop_h
+            else:
+                return get_frame(t)
+
+            frame = get_frame(t)
+            # フレームからクロップしてリサイズ
+            cropped = frame[y1:y2, x1:x2]
+            if cropped.shape[0] == 0 or cropped.shape[1] == 0:
+                return frame[:h, :w]
+            # numpy でリサイズ（PILを使用）
+            pil_img = Image.fromarray(cropped)
+            pil_img = pil_img.resize((w, h), Image.LANCZOS)
+            return np.array(pil_img)
+
+        return new_get_frame
+
+    new_clip = resized_clip.transform(make_frame_func)
+    new_clip = new_clip.resized((w, h))
+    return new_clip.with_duration(duration)
+
+
+# Ken Burns方向のローテーション
+_KB_DIRECTIONS = ["zoom_in", "zoom_out", "pan_left", "pan_right"]
+
+
+def _make_animated_clip(img_path, audio_clip, clip_index):
+    """静止画+音声からアニメーション付きクリップを作成。"""
+    duration = max(audio_clip.duration + 0.8, 3.0)
+
+    base_clip = ImageClip(img_path).with_duration(duration)
+
+    # Ken Burns効果を適用（クリップごとに方向を変える）
+    direction = _KB_DIRECTIONS[clip_index % len(_KB_DIRECTIONS)]
+    animated = _apply_ken_burns(base_clip, duration, direction)
+
+    # フェードイン・フェードアウト
+    animated = animated.with_effects([
+        vfx.FadeIn(FADE_DURATION),
+        vfx.FadeOut(FADE_DURATION),
+    ])
+
+    # 音声をつける
+    animated = animated.with_audio(audio_clip)
+
+    return animated
 
 
 def generate_video(script: dict, job_id: str, output_dir: str) -> str:
@@ -232,6 +339,7 @@ def generate_video(script: dict, job_id: str, output_dir: str) -> str:
     os.makedirs(tmp_dir, exist_ok=True)
 
     clips = []
+    clip_index = 0
 
     # 1. フック
     hook_img_path = os.path.join(tmp_dir, "hook.png")
@@ -239,9 +347,9 @@ def generate_video(script: dict, job_id: str, output_dir: str) -> str:
     _create_hook_frame(script["hook"]).save(hook_img_path)
     _generate_tts(script["hook"], hook_audio_path)
     hook_audio = AudioFileClip(hook_audio_path)
-    hook_clip = ImageClip(hook_img_path).with_duration(max(hook_audio.duration + 0.5, 3))
-    hook_clip = hook_clip.with_audio(hook_audio)
+    hook_clip = _make_animated_clip(hook_img_path, hook_audio, clip_index)
     clips.append(hook_clip)
+    clip_index += 1
 
     # 2. ステップ
     steps = script["steps"]
@@ -251,9 +359,9 @@ def generate_video(script: dict, job_id: str, output_dir: str) -> str:
         _create_step_frame(i, step["text"], len(steps)).save(img_path)
         _generate_tts(step["text"], audio_path)
         step_audio = AudioFileClip(audio_path)
-        step_clip = ImageClip(img_path).with_duration(max(step_audio.duration + 0.5, 3))
-        step_clip = step_clip.with_audio(step_audio)
+        step_clip = _make_animated_clip(img_path, step_audio, clip_index)
         clips.append(step_clip)
+        clip_index += 1
 
     # 3. アウトロ
     outro_img_path = os.path.join(tmp_dir, "outro.png")
@@ -261,16 +369,15 @@ def generate_video(script: dict, job_id: str, output_dir: str) -> str:
     _create_outro_frame(script["outro"]).save(outro_img_path)
     _generate_tts(script["outro"], outro_audio_path)
     outro_audio = AudioFileClip(outro_audio_path)
-    outro_clip = ImageClip(outro_img_path).with_duration(max(outro_audio.duration + 1, 3))
-    outro_clip = outro_clip.with_audio(outro_audio)
+    outro_clip = _make_animated_clip(outro_img_path, outro_audio, clip_index)
     clips.append(outro_clip)
 
-    # 結合・書き出し
-    final = concatenate_videoclips(clips, method="compose")
+    # クロスフェードで結合
+    final = concatenate_videoclips(clips, method="compose", padding=-FADE_DURATION)
     output_path = os.path.join(output_dir, f"lifehack_{job_id}.mp4")
     final.write_videofile(
         output_path,
-        fps=24,
+        fps=30,
         codec="libx264",
         audio_codec="aac",
         preset="fast",
