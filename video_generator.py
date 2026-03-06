@@ -1,7 +1,7 @@
 import os
 import textwrap
 import numpy as np
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFont, ImageFilter
 from gtts import gTTS
 from moviepy import (
     ImageClip,
@@ -10,6 +10,7 @@ from moviepy import (
     concatenate_videoclips,
     vfx,
 )
+from image_generator import generate_image, build_prompt
 
 
 # TikTok縦動画サイズ
@@ -85,8 +86,64 @@ def _draw_text_with_shadow(
     draw.text((x, y), text, font=font, fill=fill)
 
 
-def _create_hook_frame(hook_text: str) -> Image.Image:
-    """フック（冒頭）フレーム画像を作成。"""
+def _add_text_overlay(img: Image.Image, text: str, position: str = "center",
+                      font_size: int = 64, color: tuple = None,
+                      bold: bool = True) -> Image.Image:
+    """AI画像の上にテキストオーバーレイを追加。半透明背景付き。"""
+    if color is None:
+        color = COLORS["text_white"]
+    img = img.copy().convert("RGBA")
+    overlay = Image.new("RGBA", img.size, (0, 0, 0, 0))
+    draw = ImageDraw.Draw(overlay)
+
+    font = _get_font(font_size, bold=bold)
+    wrapped = textwrap.fill(text, width=14)
+    bbox = draw.textbbox((0, 0), wrapped, font=font)
+    tw = bbox[2] - bbox[0]
+    th = bbox[3] - bbox[1]
+
+    padding = 30
+    if position == "center":
+        text_x = (WIDTH - tw) // 2
+        text_y = (HEIGHT - th) // 2
+    elif position == "bottom":
+        text_x = (WIDTH - tw) // 2
+        text_y = HEIGHT - th - 300
+    elif position == "top":
+        text_x = (WIDTH - tw) // 2
+        text_y = 200
+
+    # 半透明の黒背景
+    draw.rounded_rectangle(
+        [text_x - padding, text_y - padding,
+         text_x + tw + padding, text_y + th + padding],
+        radius=20, fill=(0, 0, 0, 160),
+    )
+    # テキスト影
+    draw.text((text_x + 3, text_y + 3), wrapped, font=font, fill=(0, 0, 0, 200))
+    # テキスト本体
+    draw.text((text_x, text_y), wrapped, font=font, fill=color)
+
+    return Image.alpha_composite(img, overlay).convert("RGB")
+
+
+def _try_ai_image(prompt_desc: str, topic: str, output_path: str) -> bool:
+    """AI画像生成を試みる。失敗したらFalseを返す。"""
+    prompt = build_prompt(prompt_desc, topic)
+    return generate_image(prompt, output_path)
+
+
+def _create_hook_frame(hook_text: str, tmp_dir: str = None, topic: str = "") -> Image.Image:
+    """フック（冒頭）フレーム画像を作成。AI画像があればそれを使う。"""
+    # AI画像生成を試みる
+    if tmp_dir and topic:
+        ai_path = os.path.join(tmp_dir, "ai_hook.png")
+        prompt_desc = f"eye-catching opening scene, dramatic reveal, spotlight effect, exciting atmosphere"
+        if _try_ai_image(prompt_desc, topic, ai_path):
+            img = Image.open(ai_path).resize((WIDTH, HEIGHT), Image.LANCZOS)
+            return _add_text_overlay(img, hook_text, position="center",
+                                     font_size=72, color=COLORS["accent_cyan"])
+
     img = _create_gradient_bg()
     draw = ImageDraw.Draw(img)
 
@@ -125,8 +182,24 @@ def _create_hook_frame(hook_text: str) -> Image.Image:
     return img
 
 
-def _create_step_frame(step_num: int, text: str, total_steps: int) -> Image.Image:
-    """ステップフレーム画像を作成。"""
+def _create_step_frame(step_num: int, text: str, total_steps: int,
+                       visual_desc: str = "", tmp_dir: str = None, topic: str = "") -> Image.Image:
+    """ステップフレーム画像を作成。AI画像があればそれを背景に使う。"""
+    # AI画像生成を試みる
+    if tmp_dir and visual_desc:
+        ai_path = os.path.join(tmp_dir, f"ai_step_{step_num}.png")
+        prompt_desc = f"step {step_num}, {visual_desc}, tutorial demonstration"
+        if _try_ai_image(prompt_desc, topic, ai_path):
+            img = Image.open(ai_path).resize((WIDTH, HEIGHT), Image.LANCZOS)
+            # ステップ番号を上に表示
+            step_label = f"STEP {step_num}/{total_steps}"
+            img = _add_text_overlay(img, step_label, position="top",
+                                     font_size=48, color=COLORS["accent_cyan"])
+            # 本文を下に表示
+            img = _add_text_overlay(img, text, position="bottom",
+                                     font_size=56, color=COLORS["text_white"])
+            return img
+
     img = _create_gradient_bg()
     draw = ImageDraw.Draw(img)
 
@@ -187,8 +260,17 @@ def _create_step_frame(step_num: int, text: str, total_steps: int) -> Image.Imag
     return img
 
 
-def _create_outro_frame(outro_text: str) -> Image.Image:
-    """アウトロフレーム画像を作成。"""
+def _create_outro_frame(outro_text: str, tmp_dir: str = None, topic: str = "") -> Image.Image:
+    """アウトロフレーム画像を作成。AI画像があればそれを使う。"""
+    # AI画像生成を試みる
+    if tmp_dir and topic:
+        ai_path = os.path.join(tmp_dir, "ai_outro.png")
+        prompt_desc = f"celebration scene, thumbs up, like button, follow, happy ending, social media"
+        if _try_ai_image(prompt_desc, topic, ai_path):
+            img = Image.open(ai_path).resize((WIDTH, HEIGHT), Image.LANCZOS)
+            return _add_text_overlay(img, outro_text, position="center",
+                                     font_size=64, color=COLORS["accent_yellow"])
+
     img = _create_gradient_bg()
     draw = ImageDraw.Draw(img)
 
@@ -338,13 +420,14 @@ def generate_video(script: dict, job_id: str, output_dir: str) -> str:
     tmp_dir = os.path.join(output_dir, f"tmp_{job_id}")
     os.makedirs(tmp_dir, exist_ok=True)
 
+    topic = script.get("title", "")
     clips = []
     clip_index = 0
 
     # 1. フック
     hook_img_path = os.path.join(tmp_dir, "hook.png")
     hook_audio_path = os.path.join(tmp_dir, "hook.mp3")
-    _create_hook_frame(script["hook"]).save(hook_img_path)
+    _create_hook_frame(script["hook"], tmp_dir=tmp_dir, topic=topic).save(hook_img_path)
     _generate_tts(script["hook"], hook_audio_path)
     hook_audio = AudioFileClip(hook_audio_path)
     hook_clip = _make_animated_clip(hook_img_path, hook_audio, clip_index)
@@ -356,7 +439,9 @@ def generate_video(script: dict, job_id: str, output_dir: str) -> str:
     for i, step in enumerate(steps, 1):
         img_path = os.path.join(tmp_dir, f"step_{i}.png")
         audio_path = os.path.join(tmp_dir, f"step_{i}.mp3")
-        _create_step_frame(i, step["text"], len(steps)).save(img_path)
+        visual_desc = step.get("visual_description", "")
+        _create_step_frame(i, step["text"], len(steps),
+                           visual_desc=visual_desc, tmp_dir=tmp_dir, topic=topic).save(img_path)
         _generate_tts(step["text"], audio_path)
         step_audio = AudioFileClip(audio_path)
         step_clip = _make_animated_clip(img_path, step_audio, clip_index)
@@ -366,7 +451,7 @@ def generate_video(script: dict, job_id: str, output_dir: str) -> str:
     # 3. アウトロ
     outro_img_path = os.path.join(tmp_dir, "outro.png")
     outro_audio_path = os.path.join(tmp_dir, "outro.mp3")
-    _create_outro_frame(script["outro"]).save(outro_img_path)
+    _create_outro_frame(script["outro"], tmp_dir=tmp_dir, topic=topic).save(outro_img_path)
     _generate_tts(script["outro"], outro_audio_path)
     outro_audio = AudioFileClip(outro_audio_path)
     outro_clip = _make_animated_clip(outro_img_path, outro_audio, clip_index)

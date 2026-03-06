@@ -2,3 +2,6 @@ flask
 gtts
 moviepy
 Pillow
+requests
+python-dotenv
+numpy

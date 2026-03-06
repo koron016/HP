@@ -1,6 +1,9 @@
 import os
 import uuid
+from dotenv import load_dotenv
 from flask import Flask, render_template, request, jsonify
+
+load_dotenv()
 from video_generator import generate_video
 from script_generator import generate_lifehack_script
 
