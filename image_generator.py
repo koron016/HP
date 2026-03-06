@@ -13,7 +13,7 @@ from PIL import Image
 HF_API_TOKEN = os.environ.get("HF_API_TOKEN", "")
 # 無料で使える高品質モデル
 MODEL_ID = "stabilityai/stable-diffusion-xl-base-1.0"
-API_URL = f"https://api-inference.huggingface.co/models/{MODEL_ID}"
+API_URL = f"https://router.huggingface.co/hf-inference/models/{MODEL_ID}"
 
 # リトライ設定
 MAX_RETRIES = 3

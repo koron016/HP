@@ -329,51 +329,47 @@ def _apply_ken_burns(clip, duration, direction="zoom_in"):
     big_h = int(h * (1.0 + margin))
     resized_clip = clip.resized((big_w, big_h))
 
-    def make_frame_func(get_frame):
-        def new_get_frame(t):
-            progress = t / duration if duration > 0 else 0
-            progress = min(progress, 1.0)
+    def make_frame_func(get_frame, t):
+        progress = t / duration if duration > 0 else 0
+        progress = min(progress, 1.0)
 
-            if direction in ("zoom_in", "zoom_out"):
-                current_scale = scale_start + (scale_end - scale_start) * progress
-                crop_w = int(w / current_scale * (1.0 + margin))
-                crop_h = int(h / current_scale * (1.0 + margin))
-                # 中心からクロップ
-                cx, cy = big_w // 2, big_h // 2
-                x1 = max(0, cx - crop_w // 2)
-                y1 = max(0, cy - crop_h // 2)
-                x2 = min(big_w, x1 + crop_w)
-                y2 = min(big_h, y1 + crop_h)
-            elif direction == "pan_left":
-                crop_w, crop_h = w, h
-                max_offset = big_w - w
-                x_offset = int(max_offset * (1 - progress))
-                x1 = x_offset
-                y1 = (big_h - h) // 2
-                x2 = x1 + crop_w
-                y2 = y1 + crop_h
-            elif direction == "pan_right":
-                crop_w, crop_h = w, h
-                max_offset = big_w - w
-                x_offset = int(max_offset * progress)
-                x1 = x_offset
-                y1 = (big_h - h) // 2
-                x2 = x1 + crop_w
-                y2 = y1 + crop_h
-            else:
-                return get_frame(t)
+        if direction in ("zoom_in", "zoom_out"):
+            current_scale = scale_start + (scale_end - scale_start) * progress
+            crop_w = int(w / current_scale * (1.0 + margin))
+            crop_h = int(h / current_scale * (1.0 + margin))
+            # 中心からクロップ
+            cx, cy = big_w // 2, big_h // 2
+            x1 = max(0, cx - crop_w // 2)
+            y1 = max(0, cy - crop_h // 2)
+            x2 = min(big_w, x1 + crop_w)
+            y2 = min(big_h, y1 + crop_h)
+        elif direction == "pan_left":
+            crop_w, crop_h = w, h
+            max_offset = big_w - w
+            x_offset = int(max_offset * (1 - progress))
+            x1 = x_offset
+            y1 = (big_h - h) // 2
+            x2 = x1 + crop_w
+            y2 = y1 + crop_h
+        elif direction == "pan_right":
+            crop_w, crop_h = w, h
+            max_offset = big_w - w
+            x_offset = int(max_offset * progress)
+            x1 = x_offset
+            y1 = (big_h - h) // 2
+            x2 = x1 + crop_w
+            y2 = y1 + crop_h
+        else:
+            return get_frame(t)
 
-            frame = get_frame(t)
-            # フレームからクロップしてリサイズ
-            cropped = frame[y1:y2, x1:x2]
-            if cropped.shape[0] == 0 or cropped.shape[1] == 0:
-                return frame[:h, :w]
-            # numpy でリサイズ（PILを使用）
-            pil_img = Image.fromarray(cropped)
-            pil_img = pil_img.resize((w, h), Image.LANCZOS)
-            return np.array(pil_img)
-
-        return new_get_frame
+        frame = get_frame(t)
+        # フレームからクロップしてリサイズ
+        cropped = frame[y1:y2, x1:x2]
+        if cropped.shape[0] == 0 or cropped.shape[1] == 0:
+            return frame[:h, :w]
+        pil_img = Image.fromarray(cropped)
+        pil_img = pil_img.resize((w, h), Image.LANCZOS)
+        return np.array(pil_img)
 
     new_clip = resized_clip.transform(make_frame_func)
     new_clip = new_clip.resized((w, h))
