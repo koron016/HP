@@ -91,6 +91,64 @@ document.addEventListener("DOMContentLoaded", () => {
         return div.innerHTML;
     }
 
+    // ジョブ状態をポーリングして完了を待つ
+    function pollJobStatus(jobId, script) {
+        const POLL_INTERVAL = 3000; // 3秒ごとにチェック
+        let elapsed = 0;
+
+        const stepTimers = [
+            setTimeout(() => {
+                updateLoaderStep("image");
+                loaderText.textContent = "画像を生成中...";
+            }, 3000),
+            setTimeout(() => {
+                updateLoaderStep("audio");
+                loaderText.textContent = "音声を合成中...";
+            }, 8000),
+            setTimeout(() => {
+                updateLoaderStep("video");
+                loaderText.textContent = "動画を合成中...";
+            }, 15000),
+        ];
+
+        const interval = setInterval(async () => {
+            elapsed += POLL_INTERVAL;
+
+            try {
+                const res = await fetch(`/api/jobs/${jobId}`);
+                const data = await res.json();
+
+                if (data.status === "completed") {
+                    clearInterval(interval);
+                    stepTimers.forEach(clearTimeout);
+
+                    const video = document.getElementById("result-video");
+                    video.querySelector("source").src = data.video_url;
+                    video.load();
+
+                    document.getElementById("result-script").innerHTML = renderScript(data.script);
+                    btnDownload.href = data.video_url;
+                    btnDownload.download = `lifehack_${jobId}.mp4`;
+
+                    showSection(resultSection);
+                } else if (data.status === "error") {
+                    clearInterval(interval);
+                    stepTimers.forEach(clearTimeout);
+                    showError(data.error || "動画生成に失敗しました");
+                }
+                // status === "processing" → 引き続きポーリング
+            } catch (e) {
+                // ネットワークエラーの場合も続行（一時的な問題かもしれない）
+                if (elapsed > 300000) {
+                    // 5分以上経過したらタイムアウト
+                    clearInterval(interval);
+                    stepTimers.forEach(clearTimeout);
+                    showError("処理がタイムアウトしました。もう一度お試しください。");
+                }
+            }
+        }, POLL_INTERVAL);
+    }
+
     // 台本プレビュー
     btnPreview.addEventListener("click", async () => {
         const topic = topicInput.value.trim();
@@ -123,7 +181,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // 動画生成
+    // 動画生成（非同期 + ポーリング）
     btnGenerate.addEventListener("click", async () => {
         const topic = topicInput.value.trim();
         if (!topic) {
@@ -136,48 +194,23 @@ document.addEventListener("DOMContentLoaded", () => {
         showSection(loadingSection);
         resetLoaderSteps();
 
-        // ローディングアニメーション（進捗シミュレーション）
-        const stepTimers = [
-            setTimeout(() => {
-                updateLoaderStep("image");
-                loaderText.textContent = "画像を生成中...";
-            }, 5000),
-            setTimeout(() => {
-                updateLoaderStep("audio");
-                loaderText.textContent = "音声を合成中...";
-            }, 10000),
-            setTimeout(() => {
-                updateLoaderStep("video");
-                loaderText.textContent = "動画を合成中...";
-            }, 18000),
-        ];
-
         try {
             const res = await fetch("/api/generate", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ topic, style: selectedStyle }),
             });
-            stepTimers.forEach(clearTimeout);
-
             const data = await res.json();
             if (!res.ok) {
                 showError(data.error || "エラーが発生しました");
                 return;
             }
 
-            // 結果表示
-            const video = document.getElementById("result-video");
-            video.querySelector("source").src = data.video_url;
-            video.load();
-
-            document.getElementById("result-script").innerHTML = renderScript(data.script);
-            btnDownload.href = data.video_url;
-            btnDownload.download = `lifehack_${data.job_id}.mp4`;
-
-            showSection(resultSection);
+            // 台本生成完了 → 動画生成をポーリングで待つ
+            updateLoaderStep("image");
+            loaderText.textContent = "画像を生成中...";
+            pollJobStatus(data.job_id, data.script);
         } catch (e) {
-            stepTimers.forEach(clearTimeout);
             showError("通信エラーが発生しました。もう一度お試しください。");
         }
     });

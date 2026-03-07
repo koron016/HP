@@ -1,5 +1,6 @@
 import os
 import uuid
+import threading
 from dotenv import load_dotenv
 from flask import Flask, render_template, request, jsonify
 
@@ -10,6 +11,9 @@ from script_generator import generate_lifehack_script
 app = Flask(__name__)
 app.config["OUTPUT_DIR"] = os.path.join(os.path.dirname(__file__), "static", "output")
 os.makedirs(app.config["OUTPUT_DIR"], exist_ok=True)
+
+# ジョブ状態管理（インメモリ）
+jobs = {}
 
 
 @app.route("/")
@@ -32,17 +36,48 @@ def api_generate():
         return jsonify({"error": f"台本生成に失敗しました: {e}"}), 500
 
     job_id = str(uuid.uuid4())[:8]
-
-    try:
-        video_path = generate_video(script, job_id, app.config["OUTPUT_DIR"])
-    except Exception as e:
-        return jsonify({"error": f"動画生成に失敗しました: {e}"}), 500
-
-    video_url = f"/static/output/{os.path.basename(video_path)}"
-    return jsonify({
-        "video_url": video_url,
+    jobs[job_id] = {
+        "status": "processing",
+        "step": "video",
         "script": script,
-        "job_id": job_id,
+        "video_url": None,
+        "error": None,
+    }
+
+    output_dir = app.config["OUTPUT_DIR"]
+    thread = threading.Thread(
+        target=_run_video_generation,
+        args=(job_id, script, output_dir),
+        daemon=True,
+    )
+    thread.start()
+
+    return jsonify({"job_id": job_id, "script": script})
+
+
+def _run_video_generation(job_id, script, output_dir):
+    """バックグラウンドで動画を生成する。"""
+    try:
+        video_path = generate_video(script, job_id, output_dir)
+        video_url = f"/static/output/{os.path.basename(video_path)}"
+        jobs[job_id]["status"] = "completed"
+        jobs[job_id]["video_url"] = video_url
+    except Exception as e:
+        jobs[job_id]["status"] = "error"
+        jobs[job_id]["error"] = str(e)
+
+
+@app.route("/api/jobs/<job_id>", methods=["GET"])
+def api_job_status(job_id):
+    """ジョブの進捗状況を返す。"""
+    job = jobs.get(job_id)
+    if not job:
+        return jsonify({"error": "ジョブが見つかりません"}), 404
+    return jsonify({
+        "status": job["status"],
+        "video_url": job["video_url"],
+        "script": job["script"],
+        "error": job["error"],
     })
 
 
