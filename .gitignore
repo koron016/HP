@@ -5,3 +5,4 @@ static/output/*
 !static/output/.gitkeep
 venv/
 .venv/
+*TEMP_MPY_*.mp4
