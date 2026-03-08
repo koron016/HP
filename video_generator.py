@@ -1,21 +1,20 @@
 import os
+import shutil
 import textwrap
-import numpy as np
-from PIL import Image, ImageDraw, ImageFont, ImageFilter
+from PIL import Image, ImageDraw, ImageFont
 from gtts import gTTS
 from moviepy import (
     ImageClip,
     AudioFileClip,
-    CompositeVideoClip,
     concatenate_videoclips,
     vfx,
 )
 from image_generator import generate_image, build_prompt
 
 
-# TikTok縦動画サイズ
-WIDTH = 1080
-HEIGHT = 1920
+# TikTok縦動画サイズ（軽量化のため720p）
+WIDTH = 720
+HEIGHT = 1280
 
 # カラーパレット（ネオン系 TikTok風）
 COLORS = {
@@ -32,10 +31,8 @@ COLORS = {
 
 FONT_DIR = os.path.join(os.path.dirname(__file__), "static", "fonts")
 
-# トランジション・アニメーション設定
-FADE_DURATION = 0.5  # フェードイン・アウトの長さ(秒)
-ZOOM_RATIO = 0.08  # Ken Burns ズーム量 (8%)
-PAN_PIXELS = 40  # パンの移動ピクセル数
+# トランジション設定
+FADE_DURATION = 0.3  # フェードイン・アウトの長さ(秒)
 
 
 def _get_font(size: int, bold: bool = False) -> ImageFont.FreeTypeFont:
@@ -102,16 +99,16 @@ def _add_text_overlay(img: Image.Image, text: str, position: str = "center",
     tw = bbox[2] - bbox[0]
     th = bbox[3] - bbox[1]
 
-    padding = 30
+    padding = 20
     if position == "center":
         text_x = (WIDTH - tw) // 2
         text_y = (HEIGHT - th) // 2
     elif position == "bottom":
         text_x = (WIDTH - tw) // 2
-        text_y = HEIGHT - th - 300
+        text_y = HEIGHT - th - 200
     elif position == "top":
         text_x = (WIDTH - tw) // 2
-        text_y = 200
+        text_y = 130
 
     # 半透明の黒背景
     draw.rounded_rectangle(
@@ -142,42 +139,42 @@ def _create_hook_frame(hook_text: str, tmp_dir: str = None, topic: str = "") -> 
         if _try_ai_image(prompt_desc, topic, ai_path):
             img = Image.open(ai_path).resize((WIDTH, HEIGHT), Image.LANCZOS)
             return _add_text_overlay(img, hook_text, position="center",
-                                     font_size=72, color=COLORS["accent_cyan"])
+                                     font_size=48, color=COLORS["accent_cyan"])
 
     img = _create_gradient_bg()
     draw = ImageDraw.Draw(img)
 
     # ネオンサークル装飾
-    center_x, center_y = WIDTH // 2, HEIGHT // 2 - 100
+    center_x, center_y = WIDTH // 2, HEIGHT // 2 - 60
     for i, color in enumerate([COLORS["accent_pink"], COLORS["accent_cyan"]]):
-        offset = i * 20
+        offset = i * 14
         draw.ellipse(
-            [center_x - 300 - offset, center_y - 300 - offset,
-             center_x + 300 + offset, center_y + 300 + offset],
+            [center_x - 200 - offset, center_y - 200 - offset,
+             center_x + 200 + offset, center_y + 200 + offset],
             outline=color, width=3,
         )
 
     # フックテキスト
-    font = _get_font(72, bold=True)
-    wrapped = textwrap.fill(hook_text, width=12)
+    font = _get_font(48, bold=True)
+    wrapped = textwrap.fill(hook_text, width=14)
     bbox = draw.textbbox((0, 0), wrapped, font=font)
     text_w = bbox[2] - bbox[0]
     text_h = bbox[3] - bbox[1]
     _draw_text_with_shadow(
         draw,
-        ((WIDTH - text_w) // 2, (HEIGHT - text_h) // 2 - 50),
+        ((WIDTH - text_w) // 2, (HEIGHT - text_h) // 2 - 30),
         wrapped,
         font,
         COLORS["accent_cyan"],
-        shadow_offset=4,
+        shadow_offset=3,
     )
 
     # 下部に小さいテキスト
-    small_font = _get_font(36)
+    small_font = _get_font(24)
     tip = "最後まで見てね！"
     bbox2 = draw.textbbox((0, 0), tip, font=small_font)
     tw2 = bbox2[2] - bbox2[0]
-    draw.text(((WIDTH - tw2) // 2, HEIGHT - 250), tip, font=small_font, fill=COLORS["accent_yellow"])
+    draw.text(((WIDTH - tw2) // 2, HEIGHT - 160), tip, font=small_font, fill=COLORS["accent_yellow"])
 
     return img
 
@@ -194,50 +191,50 @@ def _create_step_frame(step_num: int, text: str, total_steps: int,
             # ステップ番号を上に表示
             step_label = f"STEP {step_num}/{total_steps}"
             img = _add_text_overlay(img, step_label, position="top",
-                                     font_size=48, color=COLORS["accent_cyan"])
+                                     font_size=32, color=COLORS["accent_cyan"])
             # 本文を下に表示
             img = _add_text_overlay(img, text, position="bottom",
-                                     font_size=56, color=COLORS["text_white"])
+                                     font_size=36, color=COLORS["text_white"])
             return img
 
     img = _create_gradient_bg()
     draw = ImageDraw.Draw(img)
 
     # ステップ番号（大きく）
-    num_font = _get_font(180, bold=True)
+    num_font = _get_font(120, bold=True)
     num_text = f"{step_num}"
     bbox = draw.textbbox((0, 0), num_text, font=num_font)
     nw = bbox[2] - bbox[0]
     _draw_text_with_shadow(
-        draw, ((WIDTH - nw) // 2, 300), num_text, num_font, COLORS["accent_pink"], 6
+        draw, ((WIDTH - nw) // 2, 200), num_text, num_font, COLORS["accent_pink"], 4
     )
 
     # 「STEP X / Y」ラベル
-    label_font = _get_font(48, bold=True)
+    label_font = _get_font(32, bold=True)
     label = f"STEP {step_num} / {total_steps}"
     bbox2 = draw.textbbox((0, 0), label, font=label_font)
     lw = bbox2[2] - bbox2[0]
-    draw.text(((WIDTH - lw) // 2, 520), label, font=label_font, fill=COLORS["accent_cyan"])
+    draw.text(((WIDTH - lw) // 2, 350), label, font=label_font, fill=COLORS["accent_cyan"])
 
     # プログレスバー
-    bar_y = 600
-    bar_margin = 100
+    bar_y = 400
+    bar_margin = 60
     bar_w = WIDTH - bar_margin * 2
-    bar_h = 8
+    bar_h = 6
     draw.rounded_rectangle(
         [bar_margin, bar_y, bar_margin + bar_w, bar_y + bar_h],
-        radius=4, fill=(60, 60, 80),
+        radius=3, fill=(60, 60, 80),
     )
     progress = int(bar_w * step_num / total_steps)
     draw.rounded_rectangle(
         [bar_margin, bar_y, bar_margin + progress, bar_y + bar_h],
-        radius=4, fill=COLORS["accent_pink"],
+        radius=3, fill=COLORS["accent_pink"],
     )
 
     # テキストカード背景
-    card_margin = 60
-    card_top = 700
-    card_bottom = 1400
+    card_margin = 40
+    card_top = 460
+    card_bottom = 930
     overlay = Image.new("RGBA", (WIDTH, HEIGHT), (0, 0, 0, 0))
     overlay_draw = ImageDraw.Draw(overlay)
     overlay_draw.rounded_rectangle(
@@ -248,7 +245,7 @@ def _create_step_frame(step_num: int, text: str, total_steps: int,
     draw = ImageDraw.Draw(img)
 
     # ステップ本文
-    text_font = _get_font(56)
+    text_font = _get_font(36)
     wrapped = textwrap.fill(text, width=16)
     bbox3 = draw.textbbox((0, 0), wrapped, font=text_font)
     tw = bbox3[2] - bbox3[0]
@@ -269,31 +266,31 @@ def _create_outro_frame(outro_text: str, tmp_dir: str = None, topic: str = "") -
         if _try_ai_image(prompt_desc, topic, ai_path):
             img = Image.open(ai_path).resize((WIDTH, HEIGHT), Image.LANCZOS)
             return _add_text_overlay(img, outro_text, position="center",
-                                     font_size=64, color=COLORS["accent_yellow"])
+                                     font_size=42, color=COLORS["accent_yellow"])
 
     img = _create_gradient_bg()
     draw = ImageDraw.Draw(img)
 
-    font = _get_font(64, bold=True)
-    wrapped = textwrap.fill(outro_text, width=14)
+    font = _get_font(42, bold=True)
+    wrapped = textwrap.fill(outro_text, width=16)
     bbox = draw.textbbox((0, 0), wrapped, font=font)
     tw = bbox[2] - bbox[0]
     th = bbox[3] - bbox[1]
     _draw_text_with_shadow(
         draw,
-        ((WIDTH - tw) // 2, (HEIGHT - th) // 2 - 80),
+        ((WIDTH - tw) // 2, (HEIGHT - th) // 2 - 50),
         wrapped,
         font,
         COLORS["accent_yellow"],
-        shadow_offset=4,
+        shadow_offset=3,
     )
 
     # CTA
-    cta_font = _get_font(48)
+    cta_font = _get_font(32)
     cta = "いいね＆フォローよろしく！"
     bbox2 = draw.textbbox((0, 0), cta, font=cta_font)
     cw = bbox2[2] - bbox2[0]
-    draw.text(((WIDTH - cw) // 2, HEIGHT // 2 + 100), cta, font=cta_font, fill=COLORS["text_white"])
+    draw.text(((WIDTH - cw) // 2, HEIGHT // 2 + 70), cta, font=cta_font, fill=COLORS["text_white"])
 
     return img
 
@@ -305,101 +302,22 @@ def _generate_tts(text: str, output_path: str) -> str:
     return output_path
 
 
-def _apply_ken_burns(clip, duration, direction="zoom_in"):
-    """Ken Burns効果（ズーム＋パン）を適用して動きのある映像にする。
-
-    大きめの画像からクロップしてズーム・パンをシミュレートする。
-    """
-    w, h = clip.size
-
-    # 余白を持たせるためにリサイズ（少し大きくする）
-    margin = ZOOM_RATIO
-    scale_start = 1.0 + margin
-    scale_end = 1.0
-
-    if direction == "zoom_in":
-        scale_start, scale_end = 1.0, 1.0 + margin
-    elif direction == "zoom_out":
-        scale_start, scale_end = 1.0 + margin, 1.0
-    elif direction == "pan_left":
-        scale_start = scale_end = 1.0 + margin
-
-    # 拡大した画像を作成
-    big_w = int(w * (1.0 + margin))
-    big_h = int(h * (1.0 + margin))
-    resized_clip = clip.resized((big_w, big_h))
-
-    def make_frame_func(get_frame, t):
-        progress = t / duration if duration > 0 else 0
-        progress = min(progress, 1.0)
-
-        if direction in ("zoom_in", "zoom_out"):
-            current_scale = scale_start + (scale_end - scale_start) * progress
-            crop_w = int(w / current_scale * (1.0 + margin))
-            crop_h = int(h / current_scale * (1.0 + margin))
-            # 中心からクロップ
-            cx, cy = big_w // 2, big_h // 2
-            x1 = max(0, cx - crop_w // 2)
-            y1 = max(0, cy - crop_h // 2)
-            x2 = min(big_w, x1 + crop_w)
-            y2 = min(big_h, y1 + crop_h)
-        elif direction == "pan_left":
-            crop_w, crop_h = w, h
-            max_offset = big_w - w
-            x_offset = int(max_offset * (1 - progress))
-            x1 = x_offset
-            y1 = (big_h - h) // 2
-            x2 = x1 + crop_w
-            y2 = y1 + crop_h
-        elif direction == "pan_right":
-            crop_w, crop_h = w, h
-            max_offset = big_w - w
-            x_offset = int(max_offset * progress)
-            x1 = x_offset
-            y1 = (big_h - h) // 2
-            x2 = x1 + crop_w
-            y2 = y1 + crop_h
-        else:
-            return get_frame(t)
-
-        frame = get_frame(t)
-        # フレームからクロップしてリサイズ
-        cropped = frame[y1:y2, x1:x2]
-        if cropped.shape[0] == 0 or cropped.shape[1] == 0:
-            return frame[:h, :w]
-        pil_img = Image.fromarray(cropped)
-        pil_img = pil_img.resize((w, h), Image.LANCZOS)
-        return np.array(pil_img)
-
-    new_clip = resized_clip.transform(make_frame_func)
-    new_clip = new_clip.resized((w, h))
-    return new_clip.with_duration(duration)
-
-
-# Ken Burns方向のローテーション
-_KB_DIRECTIONS = ["zoom_in", "zoom_out", "pan_left", "pan_right"]
-
-
-def _make_animated_clip(img_path, audio_clip, clip_index):
-    """静止画+音声からアニメーション付きクリップを作成。"""
+def _make_clip(img_path, audio_clip):
+    """静止画+音声からフェード付きクリップを作成。"""
     duration = max(audio_clip.duration + 0.8, 3.0)
 
-    base_clip = ImageClip(img_path).with_duration(duration)
-
-    # Ken Burns効果を適用（クリップごとに方向を変える）
-    direction = _KB_DIRECTIONS[clip_index % len(_KB_DIRECTIONS)]
-    animated = _apply_ken_burns(base_clip, duration, direction)
+    clip = ImageClip(img_path).with_duration(duration)
 
     # フェードイン・フェードアウト
-    animated = animated.with_effects([
+    clip = clip.with_effects([
         vfx.FadeIn(FADE_DURATION),
         vfx.FadeOut(FADE_DURATION),
     ])
 
     # 音声をつける
-    animated = animated.with_audio(audio_clip)
+    clip = clip.with_audio(audio_clip)
 
-    return animated
+    return clip
 
 
 def generate_video(script: dict, job_id: str, output_dir: str) -> str:
@@ -418,7 +336,6 @@ def generate_video(script: dict, job_id: str, output_dir: str) -> str:
 
     topic = script.get("title", "")
     clips = []
-    clip_index = 0
 
     # 1. フック
     hook_img_path = os.path.join(tmp_dir, "hook.png")
@@ -426,9 +343,7 @@ def generate_video(script: dict, job_id: str, output_dir: str) -> str:
     _create_hook_frame(script["hook"], tmp_dir=tmp_dir, topic=topic).save(hook_img_path)
     _generate_tts(script["hook"], hook_audio_path)
     hook_audio = AudioFileClip(hook_audio_path)
-    hook_clip = _make_animated_clip(hook_img_path, hook_audio, clip_index)
-    clips.append(hook_clip)
-    clip_index += 1
+    clips.append(_make_clip(hook_img_path, hook_audio))
 
     # 2. ステップ
     steps = script["steps"]
@@ -440,9 +355,7 @@ def generate_video(script: dict, job_id: str, output_dir: str) -> str:
                            visual_desc=visual_desc, tmp_dir=tmp_dir, topic=topic).save(img_path)
         _generate_tts(step["text"], audio_path)
         step_audio = AudioFileClip(audio_path)
-        step_clip = _make_animated_clip(img_path, step_audio, clip_index)
-        clips.append(step_clip)
-        clip_index += 1
+        clips.append(_make_clip(img_path, step_audio))
 
     # 3. アウトロ
     outro_img_path = os.path.join(tmp_dir, "outro.png")
@@ -450,19 +363,18 @@ def generate_video(script: dict, job_id: str, output_dir: str) -> str:
     _create_outro_frame(script["outro"], tmp_dir=tmp_dir, topic=topic).save(outro_img_path)
     _generate_tts(script["outro"], outro_audio_path)
     outro_audio = AudioFileClip(outro_audio_path)
-    outro_clip = _make_animated_clip(outro_img_path, outro_audio, clip_index)
-    clips.append(outro_clip)
+    clips.append(_make_clip(outro_img_path, outro_audio))
 
-    # クロスフェードで結合
+    # フェードで結合
     final = concatenate_videoclips(clips, method="compose", padding=-FADE_DURATION)
     output_path = os.path.join(output_dir, f"lifehack_{job_id}.mp4")
     final.write_videofile(
         output_path,
-        fps=30,
+        fps=24,
         codec="libx264",
         audio_codec="aac",
-        preset="fast",
-        threads=4,
+        preset="ultrafast",
+        threads=2,
     )
 
     # クリーンアップ
@@ -470,7 +382,6 @@ def generate_video(script: dict, job_id: str, output_dir: str) -> str:
     for clip in clips:
         clip.close()
 
-    import shutil
     shutil.rmtree(tmp_dir, ignore_errors=True)
 
     return output_path
