@@ -1,5 +1,6 @@
 import os
 import uuid
+import json
 import threading
 from dotenv import load_dotenv
 from flask import Flask, render_template, request, jsonify
@@ -12,8 +13,23 @@ app = Flask(__name__)
 app.config["OUTPUT_DIR"] = os.path.join(os.path.dirname(__file__), "static", "output")
 os.makedirs(app.config["OUTPUT_DIR"], exist_ok=True)
 
-# ジョブ状態管理（インメモリ）
-jobs = {}
+# ジョブ状態をファイルで管理（gunicornマルチワーカー対応）
+JOBS_DIR = os.path.join(os.path.dirname(__file__), "static", "output", "jobs")
+os.makedirs(JOBS_DIR, exist_ok=True)
+
+
+def _save_job(job_id, data):
+    path = os.path.join(JOBS_DIR, f"{job_id}.json")
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False)
+
+
+def _load_job(job_id):
+    path = os.path.join(JOBS_DIR, f"{job_id}.json")
+    if not os.path.exists(path):
+        return None
+    with open(path, "r", encoding="utf-8") as f:
+        return json.load(f)
 
 
 @app.route("/")
@@ -36,13 +52,12 @@ def api_generate():
         return jsonify({"error": f"台本生成に失敗しました: {e}"}), 500
 
     job_id = str(uuid.uuid4())[:8]
-    jobs[job_id] = {
+    _save_job(job_id, {
         "status": "processing",
-        "step": "video",
         "script": script,
         "video_url": None,
         "error": None,
-    }
+    })
 
     output_dir = app.config["OUTPUT_DIR"]
     thread = threading.Thread(
@@ -60,25 +75,28 @@ def _run_video_generation(job_id, script, output_dir):
     try:
         video_path = generate_video(script, job_id, output_dir)
         video_url = f"/static/output/{os.path.basename(video_path)}"
-        jobs[job_id]["status"] = "completed"
-        jobs[job_id]["video_url"] = video_url
+        _save_job(job_id, {
+            "status": "completed",
+            "script": script,
+            "video_url": video_url,
+            "error": None,
+        })
     except Exception as e:
-        jobs[job_id]["status"] = "error"
-        jobs[job_id]["error"] = str(e)
+        _save_job(job_id, {
+            "status": "error",
+            "script": script,
+            "video_url": None,
+            "error": str(e),
+        })
 
 
 @app.route("/api/jobs/<job_id>", methods=["GET"])
 def api_job_status(job_id):
     """ジョブの進捗状況を返す。"""
-    job = jobs.get(job_id)
+    job = _load_job(job_id)
     if not job:
         return jsonify({"error": "ジョブが見つかりません"}), 404
-    return jsonify({
-        "status": job["status"],
-        "video_url": job["video_url"],
-        "script": job["script"],
-        "error": job["error"],
-    })
+    return jsonify(job)
 
 
 @app.route("/api/scripts/preview", methods=["POST"])
