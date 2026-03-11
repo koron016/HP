@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LifeHack AI - TikTok動画ジェネレーター</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="app">
+        <!-- ヘッダー -->
+        <header class="header">
+            <div class="logo">
+                <span class="logo-icon">⚡</span>
+                <span class="logo-text">LifeHack AI</span>
+            </div>
+            <p class="tagline">TikTokでバズるライフハック動画をAIで自動生成</p>
+        </header>
+
+        <!-- メインコンテンツ -->
+        <main class="main">
+            <!-- 入力セクション -->
+            <section class="input-section">
+                <div class="input-card">
+                    <h2 class="section-title">🎬 動画を作成</h2>
+
+                    <div class="form-group">
+                        <label for="topic">トピック / ライフハックのテーマ</label>
+                        <input
+                            type="text"
+                            id="topic"
+                            placeholder="例: ペットボトルの意外な使い方、時短料理テク..."
+                            maxlength="200"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="style">スタイル</label>
+                        <div class="style-selector">
+                            <button class="style-btn active" data-style="おもしろ系">😂 おもしろ系</button>
+                            <button class="style-btn" data-style="驚き系">😱 驚き系</button>
+                            <button class="style-btn" data-style="実用系">💡 実用系</button>
+                            <button class="style-btn" data-style="裏ワザ系">🤫 裏ワザ系</button>
+                        </div>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button id="btn-preview" class="btn btn-secondary">
+                            📝 台本だけ見る
+                        </button>
+                        <button id="btn-generate" class="btn btn-primary">
+                            🎥 動画を生成
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ローディング -->
+            <section id="loading" class="loading-section hidden">
+                <div class="loader">
+                    <div class="loader-spinner"></div>
+                    <p class="loader-text">AIが台本を作成中...</p>
+                    <div class="loader-steps">
+                        <div class="loader-step active" data-step="script">📝 台本生成</div>
+                        <div class="loader-step" data-step="image">🖼️ 画像生成</div>
+                        <div class="loader-step" data-step="audio">🔊 音声合成</div>
+                        <div class="loader-step" data-step="video">🎬 動画合成</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 台本プレビュー -->
+            <section id="script-preview" class="preview-section hidden">
+                <div class="preview-card">
+                    <h2 class="section-title">📝 生成された台本</h2>
+                    <div id="script-content" class="script-content"></div>
+                    <button id="btn-close-preview" class="btn btn-secondary">閉じる</button>
+                </div>
+            </section>
+
+            <!-- 動画結果 -->
+            <section id="result" class="result-section hidden">
+                <div class="result-card">
+                    <h2 class="section-title">🎉 動画が完成！</h2>
+
+                    <div class="video-container">
+                        <video id="result-video" controls playsinline>
+                            <source src="" type="video/mp4">
+                        </video>
+                    </div>
+
+                    <div id="result-script" class="script-content"></div>
+
+                    <div class="result-actions">
+                        <a id="btn-download" class="btn btn-primary" download>
+                            ⬇️ ダウンロード
+                        </a>
+                        <button id="btn-new" class="btn btn-secondary">
+                            🔄 新しく作る
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- エラー -->
+            <section id="error" class="error-section hidden">
+                <div class="error-card">
+                    <p class="error-icon">⚠️</p>
+                    <p id="error-message" class="error-message"></p>
+                    <button id="btn-retry" class="btn btn-secondary">再試行</button>
+                </div>
+            </section>
+        </main>
+
+        <!-- フッター -->
+        <footer class="footer">
+            <p>Powered by Claude AI + FFmpeg</p>
+        </footer>
+    </div>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>

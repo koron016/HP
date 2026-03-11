@@ -6,7 +6,12 @@ This file provides guidance to AI assistants (e.g. Claude Code) working in this 
 
 ## Repository Status
 
-This repository is currently **empty** — no source code, dependencies, or configuration files have been added yet. This CLAUDE.md will be updated as the project evolves.
+**LifeHack AI** — TikTokでバズるライフハック動画をAIで自動生成するWebアプリケーション。
+
+- **言語**: Python 3
+- **フレームワーク**: Flask
+- **台本生成**: テンプレートベース（API不要・完全無料）
+- **動画生成**: Pillow (画像) + gTTS (音声) + moviepy/FFmpeg (動画合成)
 
 **Remote:** `http://local_proxy@127.0.0.1:31504/git/koron016/HP`
 
@@ -76,15 +81,39 @@ Since the project is not yet defined, the following is a recommended baseline wo
 
 ## Project Structure
 
-_To be documented once source files are added._
+```
+HP/
+├── app.py                  # Flask アプリ（エントリーポイント）
+├── script_generator.py     # テンプレートベース台本生成（API不要）
+├── video_generator.py      # 画像・音声・動画合成エンジン
+├── requirements.txt        # Python 依存パッケージ
+├── .env.example            # 環境変数テンプレート
+├── templates/
+│   └── index.html          # メインページ
+├── static/
+│   ├── css/style.css       # TikTok風 UI スタイル
+│   ├── js/app.js           # フロントエンド JS
+│   ├── fonts/              # 日本語フォント（Noto Sans JP）
+│   └── output/             # 生成された動画の出力先
+└── CLAUDE.md
+```
 
-Suggested sections to add here when the project grows:
+## Setup
 
-- **`src/` or equivalent** — main source code
-- **`tests/`** — test suite
-- **`docs/`** — project documentation
-- **Build & dependency files** — e.g. `package.json`, `Cargo.toml`, `go.mod`, `requirements.txt`
-- **CI/CD** — e.g. `.github/workflows/`
+```bash
+pip install -r requirements.txt
+python app.py
+# http://localhost:5000 でアクセス
+```
+
+### 必要な環境変数
+
+- `HF_API_TOKEN` — Hugging Face APIトークン（任意）。設定するとAI画像生成が有効になります。未設定でもテンプレート画像で動作します。
+
+### 日本語フォント（任意）
+
+`static/fonts/` に Noto Sans JP フォントを配置すると日本語テキストが綺麗に表示されます。
+なくても動作します（デフォルトフォントにフォールバック）。
 
 ---
 

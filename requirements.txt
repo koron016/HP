@@ -1,0 +1,8 @@
+flask
+gunicorn
+gtts
+moviepy
+Pillow
+requests
+python-dotenv
+numpy
