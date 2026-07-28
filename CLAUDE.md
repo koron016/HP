@@ -12,9 +12,9 @@ integration branch, and the branches are not intended to be merged into one anot
 
 Two consequences that will bite you if you miss them:
 
-1. **The files you see depend entirely on which branch is checked out.** The branch holding this
-   documentation contains *only* `CLAUDE.md` — no application code. If you `ls` and see one file,
-   the repository is not empty; you are on the docs branch.
+1. **The files you see depend entirely on which branch is checked out.** Each branch holds a
+   different project, and none of them contains the others. If a branch looks sparse, the
+   repository is not empty — you are simply on a different project's branch.
 2. **`claude/x-auto-posting-system-SjUEl` has an unrelated history.** It has its own root commit and
    shares no ancestor with the other branches (`git merge-base` returns nothing). Never try to
    rebase or merge it against them.
@@ -23,7 +23,7 @@ Two consequences that will bite you if you miss them:
 
 | Branch | Contents | History |
 |---|---|---|
-| `claude/claude-md-docs-3bgn2h` | This `CLAUDE.md` only | From `ba06c52` |
+| `claude/claude-md-docs-3bgn2h` | **Homepage** (static site) + this `CLAUDE.md` | From `ba06c52` |
 | `claude/claude-md-mm05xnbhma94ky4k-pifkb` | Earlier `CLAUDE.md` only | `ba06c52` |
 | `claude/ai-video-generation-tool-EWKRY` | **LifeHack AI** — Python/Flask TikTok video generator | Descends from `ba06c52` |
 | `claude/x-auto-posting-system-SjUEl` | **X 自動投稿システム** — Node.js CLI auto-poster | **Orphan root** |
@@ -38,6 +38,43 @@ git show origin/<branch-name>:<path>
 
 **Work only on your designated branch.** Do not add code for one project to another project's
 branch, and do not push to a branch you were not assigned.
+
+---
+
+## Project: Homepage
+
+*Branch: `claude/claude-md-docs-3bgn2h` (this branch)*
+
+A static personal homepage in Japanese, intended for free hosting on GitHub Pages. Plain HTML/CSS/JS
+with **no build step, no dependencies, and no external requests** — open `index.html` in a browser
+and it works.
+
+```
+index.html          # All page content; edit points marked with ▼ 書き換えポイント comments
+assets/style.css    # All styling; the color palette is the first block in the file
+assets/main.js      # Theme toggle, scroll reveal, footer year
+README.md           # Japanese guide: how to edit and how to publish on GitHub Pages
+```
+
+### Conventions to preserve
+
+- **Content must render without JavaScript.** `.reveal` elements are visible by default; the
+  fade-in styles apply only under a `.js` class that an inline script in `<head>` adds. Never move
+  `opacity: 0` back onto a bare `.reveal` selector — a JS failure would blank the whole page. The
+  `.js` class must be set inline in `<head>`, not from `main.js`, or content flashes before hiding.
+- **Keep it dependency-free.** No CDN links, no web fonts, no build tooling. It is served as static
+  files, and the site is meant to stay editable by hand.
+- Colors are CSS custom properties defined once at the top of `style.css`, with light values,
+  a `prefers-color-scheme: dark` block, and an explicit `[data-theme]` block for the manual toggle.
+  Changing a color means editing one variable, not hunting through rules.
+- The `▼ 書き換えポイント` comments are the site's editing UI for a non-technical owner. Keep them
+  accurate when restructuring the markup.
+
+### Verifying changes
+
+There is no test suite. Check changes by opening the page and confirming: it reads correctly at
+mobile width with no horizontal scroll, both light and dark palettes look right, and the content is
+still visible with JavaScript disabled.
 
 ---
 

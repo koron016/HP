@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>koron — つくったもの</title>
+<meta name="description" content="koron のホームページ。つくったアプリやツールを置いています。">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="koron — つくったもの">
+<meta property="og:description" content="koron のホームページ。つくったアプリやツールを置いています。">
+<meta property="og:locale" content="ja_JP">
+
+<!-- JavaScript が使えるときだけ、スクロール表示の演出を有効にする印をつけます。
+     （この 1 行があるおかげで、JavaScript が止まっても文章は消えません） -->
+<script>document.documentElement.classList.add("js");</script>
+
+<link rel="stylesheet" href="assets/style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+</head>
+<body>
+
+<a class="skip-link" href="#main">本文へスキップ</a>
+
+<header class="site-header">
+  <div class="container header-inner">
+    <!-- ▼ 書き換えポイント：サイト左上の名前 -->
+    <a class="brand" href="#top">koron</a>
+    <button id="theme-toggle" class="theme-toggle" type="button" aria-label="配色を切り替える">
+      <svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true" focusable="false">
+        <circle cx="8" cy="8" r="7" fill="none" stroke="currentColor" stroke-width="1.6"/>
+        <path d="M8 1 A7 7 0 0 1 8 15 Z" fill="currentColor"/>
+      </svg>
+    </button>
+  </div>
+</header>
+
+<main id="main">
+
+  <!-- ============================================
+       ヒーロー（一番上の大きい部分）
+       ▼ 書き換えポイント：名前・肩書き・ひとこと
+       ============================================ -->
+  <section id="top" class="hero">
+    <div class="container">
+      <p class="hero-eyebrow reveal">つくるひと</p>
+      <h1 class="hero-title reveal">koron</h1>
+      <p class="hero-lead reveal">
+        思いついたものを、とりあえず動く形にするのが好きです。<br>
+        いまは AI を使ったツールづくりを練習中。
+      </p>
+      <div class="hero-actions reveal">
+        <a class="btn btn-primary" href="#works">つくったものを見る</a>
+        <a class="btn btn-ghost" href="https://github.com/koron016" target="_blank" rel="noopener">GitHub</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================
+       自己紹介
+       ▼ 書き換えポイント：紹介文と「できること」
+       ============================================ -->
+  <section id="about" class="section">
+    <div class="container">
+      <h2 class="section-title reveal">自己紹介</h2>
+      <div class="prose reveal">
+        <p>
+          プログラミングを独学で触りはじめて、自分が「あったら便利だな」と思ったものを
+          少しずつ形にしています。きれいな設計より、まず動くものを作って、
+          使いながら直していくやり方が性に合っているみたいです。
+        </p>
+        <p>
+          最近は、動画を自動で作るアプリと、SNS の投稿を自動化するツールを作りました。
+          どちらもお金をかけずに動かせるように工夫しています。
+        </p>
+      </div>
+
+      <ul class="tag-list reveal">
+        <li>Python</li>
+        <li>Flask</li>
+        <li>JavaScript</li>
+        <li>Node.js</li>
+        <li>SQLite</li>
+        <li>HTML / CSS</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============================================
+       つくったもの
+       ▼ 書き換えポイント：作品が増えたら <article> ごとコピーして増やす
+       ============================================ -->
+  <section id="works" class="section section-alt">
+    <div class="container">
+      <h2 class="section-title reveal">つくったもの</h2>
+
+      <div class="works">
+
+        <article class="work reveal">
+          <div class="work-head">
+            <h3 class="work-title">LifeHack AI</h3>
+            <span class="work-year">2026</span>
+          </div>
+          <p class="work-desc">
+            テーマを入力すると、TikTok 向けの縦型ライフハック動画を自動で作ってくれる Web アプリ。
+            台本づくり・画像・ナレーション・動画の書き出しまで、ぜんぶ自動でやります。
+            有料 API を使わなくても動くように作りました。
+          </p>
+          <ul class="work-tags">
+            <li>Python</li>
+            <li>Flask</li>
+            <li>moviepy</li>
+            <li>gTTS</li>
+          </ul>
+          <a class="work-link" href="https://github.com/koron016/HP/tree/claude/ai-video-generation-tool-EWKRY" target="_blank" rel="noopener">
+            コードを見る <span aria-hidden="true">→</span>
+          </a>
+        </article>
+
+        <article class="work reveal">
+          <div class="work-head">
+            <h3 class="work-title">X 自動投稿システム</h3>
+            <span class="work-year">2026</span>
+          </div>
+          <p class="work-desc">
+            X（旧 Twitter）への投稿を自動化するツール。すぐ投稿するだけでなく、
+            日時を指定した予約投稿や、連続ツイート（スレッド）にも対応しています。
+            予約はデータベースに保存するので、パソコンを再起動しても消えません。
+          </p>
+          <ul class="work-tags">
+            <li>Node.js</li>
+            <li>SQLite</li>
+            <li>node-cron</li>
+            <li>CLI</li>
+          </ul>
+          <a class="work-link" href="https://github.com/koron016/HP/tree/claude/x-auto-posting-system-SjUEl" target="_blank" rel="noopener">
+            コードを見る <span aria-hidden="true">→</span>
+          </a>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================
+       連絡先
+       ▼ 書き換えポイント：SNS や連絡先を足す・消す
+       ============================================ -->
+  <section id="contact" class="section">
+    <div class="container">
+      <h2 class="section-title reveal">連絡先</h2>
+      <p class="prose reveal">
+        つくったものについての感想や、こういうの作れる？ という相談はいつでもどうぞ。
+      </p>
+      <ul class="links reveal">
+        <li>
+          <a href="https://github.com/koron016" target="_blank" rel="noopener">
+            <span class="link-label">GitHub</span>
+            <span class="link-value">@koron016</span>
+          </a>
+        </li>
+        <!-- X アカウントを載せたくなったら、下の行の先頭と末尾のコメント記号を外してください
+        <li>
+          <a href="https://x.com/ここにID" target="_blank" rel="noopener">
+            <span class="link-label">X</span>
+            <span class="link-value">@ここにID</span>
+          </a>
+        </li>
+        -->
+      </ul>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <p>&copy; <span id="year">2026</span> koron</p>
+  </div>
+</footer>
+
+<script src="assets/main.js"></script>
+</body>
+</html>
