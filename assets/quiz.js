@@ -1,4 +1,4 @@
-/* 診断の動き。中身（質問・結果）を変えたいときは quiz-data.js の方を直してください。 */
+/* 診断の動き。中身（質問・タイプ）を変えたいときは quiz-data.js の方を直してください。 */
 
 (function () {
   "use strict";
@@ -6,11 +6,45 @@
   var DATA = window.QUIZ_DATA;
   if (!DATA) return;
 
-  var MAX_SCORE = DATA.questions.reduce(function (sum, q) {
-    return sum + Math.max.apply(null, q.choices.map(function (c) { return c.points; }));
-  }, 0);
+  /* =========================================================
+     採点まわり。ここは build.js と同じ計算をしています。
+     片方だけ直すと、サイトとシェア画像がズレます。
+     ========================================================= */
 
-  var TONE_VAR = { low: "var(--low)", mid: "var(--mid)", high: "var(--high)" };
+  /* 各軸で取りうる最大の絶対値（棒グラフの目盛りに使う） */
+  var AXIS_MAX = DATA.axes.map(function (_, i) {
+    return DATA.questions
+      .filter(function (q) { return q.axis === i; })
+      .reduce(function (sum, q) {
+        return sum + Math.max.apply(null, q.choices.map(function (c) { return Math.abs(c.value); }));
+      }, 0);
+  });
+
+  /* 軸ごとの合計点から、4文字のタイプを組み立てる */
+  function buildCode(scores) {
+    return scores.map(function (score, i) {
+      var axis = DATA.axes[i];
+      return score < 0 ? axis.left.key : axis.right.key;
+    }).join("");
+  }
+
+  /* 相性。
+     良い＝「受け取り方」と「見せ方」はそのまま、「任せ方」と「話しかけ方」が逆のタイプ。
+     悪い＝4軸すべてが逆のタイプ。 */
+  function flip(code, axisIndexes) {
+    return code.split("").map(function (ch, i) {
+      if (axisIndexes.indexOf(i) === -1) return ch;
+      var axis = DATA.axes[i];
+      return ch === axis.left.key ? axis.right.key : axis.left.key;
+    }).join("");
+  }
+
+  var goodMatch = function (code) { return flip(code, [0, 2]); };
+  var badMatch  = function (code) { return flip(code, [0, 1, 2, 3]); };
+
+  /* =========================================================
+     画面
+     ========================================================= */
 
   var el = {
     start: document.getElementById("screen-start"),
@@ -25,19 +59,19 @@
     bar: document.getElementById("progress-bar"),
     qText: document.getElementById("q-text"),
     choices: document.getElementById("q-choices"),
-    scoreNum: document.getElementById("score-num"),
-    meter: document.getElementById("meter-fill"),
+    code: document.getElementById("result-code"),
     name: document.getElementById("result-name"),
     catch: document.getElementById("result-catch"),
     body: document.getElementById("result-body"),
     twist: document.getElementById("result-twist"),
+    axes: document.getElementById("result-axes"),
+    good: document.getElementById("match-good"),
+    bad: document.getElementById("match-bad"),
     year: document.getElementById("year")
   };
 
   var answers = [];
   var current = 0;
-
-  /* ---------- 画面の切り替え ---------- */
 
   function show(screen) {
     [el.start, el.quiz, el.result].forEach(function (s) { s.hidden = true; });
@@ -74,13 +108,13 @@
 
       btn.appendChild(key);
       btn.appendChild(label);
-      btn.addEventListener("click", function () { answer(choice.points); });
+      btn.addEventListener("click", function () { answer(choice.value); });
       el.choices.appendChild(btn);
     });
   }
 
-  function answer(points) {
-    answers[current] = points;
+  function answer(value) {
+    answers[current] = value;
     current++;
     if (current < DATA.questions.length) {
       renderQuestion();
@@ -88,8 +122,6 @@
       showResult();
     }
   }
-
-  /* ---------- キーボードでも答えられるようにする ---------- */
 
   document.addEventListener("keydown", function (e) {
     if (el.quiz.hidden) return;
@@ -100,39 +132,30 @@
 
   /* ---------- 結果を出す ---------- */
 
-  function findResult(score) {
-    for (var i = 0; i < DATA.results.length; i++) {
-      if (score >= DATA.results[i].min && score <= DATA.results[i].max) {
-        return DATA.results[i];
-      }
-    }
-    return DATA.results[DATA.results.length - 1];
-  }
-
   function showResult() {
-    var score = answers.reduce(function (a, b) { return a + b; }, 0);
-    var percent = Math.round((score / MAX_SCORE) * 100);
-    var result = findResult(score);
-
-    el.result.style.setProperty("--tone", TONE_VAR[result.tone] || "var(--accent)");
-    el.name.textContent = result.name;
-    el.catch.textContent = result.catch;
-    el.body.textContent = result.body;
-    el.twist.textContent = result.twist;
-
-    show(el.result);
-
-    // 数字をカウントアップさせる
-    countUp(percent);
-    requestAnimationFrame(function () {
-      el.meter.style.width = percent + "%";
+    var scores = DATA.axes.map(function (_, i) {
+      return DATA.questions.reduce(function (sum, q, qi) {
+        return q.axis === i ? sum + answers[qi] : sum;
+      }, 0);
     });
 
-    // シェア用のリンクを組み立てる
-    var url = resultUrl(result.slug);
+    var code = buildCode(scores);
+    var type = DATA.types[code];
+
+    el.code.textContent = code;
+    el.name.textContent = type.name;
+    el.catch.textContent = type.catch;
+    el.body.textContent = type.body;
+    el.twist.textContent = type.twist;
+
+    renderAxes(scores);
+    renderMatch(code);
+    show(el.result);
+
+    var url = resultUrl(code);
     var text =
-      "私のAI依存度は " + percent + "% 「" + result.name + "」でした。\n" +
-      result.catch + "\n\n#" + DATA.hashtag;
+      "私のAIタイプは【" + code + "】" + type.name + "でした。\n" +
+      type.catch + "\n\n#" + DATA.hashtag;
 
     el.btnShare.href =
       "https://x.com/intent/post?text=" + encodeURIComponent(text) +
@@ -141,27 +164,71 @@
     el.btnCopy.dataset.url = url;
   }
 
-  function countUp(target) {
-    var start = null;
-    var duration = 900;
-    function step(ts) {
-      if (start === null) start = ts;
-      var p = Math.min((ts - start) / duration, 1);
-      // 最後にゆっくり止まる動き
-      var eased = 1 - Math.pow(1 - p, 3);
-      el.scoreNum.textContent = Math.round(target * eased);
-      if (p < 1) requestAnimationFrame(step);
-    }
-    requestAnimationFrame(step);
+  /* 4本の棒グラフ。どちら側にどれだけ寄っているかを見せる */
+  function renderAxes(scores) {
+    el.axes.innerHTML = "";
+
+    DATA.axes.forEach(function (axis, i) {
+      var score = scores[i];
+      var toRight = score > 0;
+      var strength = Math.round((Math.abs(score) / AXIS_MAX[i]) * 100);
+      var winner = toRight ? axis.right : axis.left;
+
+      var row = document.createElement("div");
+      row.className = "axis";
+
+      var head = document.createElement("div");
+      head.className = "axis-head";
+      head.innerHTML =
+        '<span class="axis-side' + (toRight ? "" : " is-on") + '">' + axis.left.label + "</span>" +
+        '<span class="axis-title">' + axis.title + "</span>" +
+        '<span class="axis-side' + (toRight ? " is-on" : "") + '">' + axis.right.label + "</span>";
+
+      var track = document.createElement("div");
+      track.className = "axis-track";
+
+      var fill = document.createElement("div");
+      fill.className = "axis-fill " + (toRight ? "to-right" : "to-left");
+      fill.style.width = "0%";
+
+      track.appendChild(fill);
+      row.appendChild(head);
+      row.appendChild(track);
+
+      var note = document.createElement("p");
+      note.className = "axis-note";
+      note.textContent = winner.label + "（" + winner.desc + "）" + strength + "%";
+      row.appendChild(note);
+
+      el.axes.appendChild(row);
+
+      // 少し遅らせて伸ばすと、順番に伸びて見える
+      setTimeout(function () { fill.style.width = strength / 2 + "%"; }, 120 + i * 110);
+    });
+  }
+
+  function renderMatch(code) {
+    var good = goodMatch(code);
+    var bad = badMatch(code);
+    el.good.innerHTML =
+      '<a href="' + resultPath(good) + '"><strong>' + good + "</strong>" +
+      DATA.types[good].name + "</a>";
+    el.bad.innerHTML =
+      '<a href="' + resultPath(bad) + '"><strong>' + bad + "</strong>" +
+      DATA.types[bad].name + "</a>";
+  }
+
+  function resultPath(code) {
+    return "result/" + code.toLowerCase() + ".html";
   }
 
   /* 結果ページのアドレス。公開先が変わっても動くように、
      いま開いているページの場所を基準にする。 */
-  function resultUrl(slug) {
+  function resultUrl(code) {
     try {
-      return new URL("result/" + slug + ".html", window.location.href).href;
+      return new URL(resultPath(code), window.location.href).href;
     } catch (e) {
-      return DATA.siteUrl + "result/" + slug + ".html";
+      return DATA.siteUrl + resultPath(code);
     }
   }
 
@@ -184,17 +251,14 @@
   el.btnRetry.addEventListener("click", function () {
     answers = [];
     current = 0;
-    el.scoreNum.textContent = "0";
-    el.meter.style.width = "0";
     show(el.start);
   });
 
   el.btnCopy.addEventListener("click", function () {
     var url = el.btnCopy.dataset.url || window.location.href;
     var done = function () {
-      var original = "リンクをコピー";
       el.btnCopy.textContent = "コピーしました";
-      setTimeout(function () { el.btnCopy.textContent = original; }, 1600);
+      setTimeout(function () { el.btnCopy.textContent = "リンクをコピー"; }, 1600);
     };
 
     if (navigator.clipboard && window.isSecureContext) {
@@ -209,7 +273,8 @@
       input.value = url;
       document.body.appendChild(input);
       input.select();
-      try { document.execCommand("copy"); done(); } catch (e) { window.prompt("このリンクをコピーしてください", url); }
+      try { document.execCommand("copy"); done(); }
+      catch (e) { window.prompt("このリンクをコピーしてください", url); }
       document.body.removeChild(input);
     }
   });

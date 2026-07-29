@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>AI依存度診断 — あなたはもう、どこまでAIに預けている？</title>
-<meta name="description" content="6つの質問に答えるだけ。あなたがどこまでAIに脳を預けているか、30秒でわかります。">
+<title>AI16タイプ診断 — あなたはAIと、どういう関係を結んでいる？</title>
+<meta name="description" content="8つの質問で、AIとの付き合い方が16タイプのどれかに分かれます。相性のいいタイプもわかります。">
 
 <meta property="og:type" content="website">
-<meta property="og:title" content="AI依存度診断">
-<meta property="og:description" content="6つの質問に答えるだけ。あなたがどこまでAIに脳を預けているか、30秒でわかります。">
+<meta property="og:title" content="AI16タイプ診断">
+<meta property="og:description" content="8つの質問で、AIとの付き合い方が16タイプのどれかに分かれます。相性のいいタイプもわかります。">
 <meta property="og:image" content="https://koron016.github.io/HP/assets/ogp/top.png">
 <meta property="og:locale" content="ja_JP">
 <meta name="twitter:card" content="summary_large_image">
@@ -22,23 +22,24 @@
 
   <!-- ============ スタート画面 ============ -->
   <section id="screen-start" class="screen">
-    <p class="eyebrow">6つの質問・30秒</p>
+    <p class="eyebrow">8つの質問・1分</p>
     <h1 class="title">
-      AI依存度<span class="title-accent">診断</span>
+      AI<span class="title-accent">16タイプ</span>診断
     </h1>
     <p class="lead">
-      気づけば、なんでも聞いていませんか。<br>
-      あなたがどこまでAIに預けているか、測ります。
+      どこまで任せるか。信じるか、疑うか。<br>
+      使っていると、人に言うか。<br>
+      あなたとAIの関係を、4つの軸で分けます。
     </p>
     <button id="btn-start" class="btn btn-main" type="button">診断をはじめる</button>
-    <p class="note">結果はその場で表示されます。登録も入力もありません。</p>
+    <p class="note">結果はその場で出ます。登録も入力もありません。</p>
   </section>
 
   <!-- ============ 質問画面 ============ -->
   <section id="screen-quiz" class="screen" hidden>
     <div class="progress">
       <div class="progress-meta">
-        <span id="q-counter">Q1 / 6</span>
+        <span id="q-counter">Q1 / 8</span>
         <button id="btn-back" class="btn-back" type="button">戻る</button>
       </div>
       <div class="progress-track"><div id="progress-bar" class="progress-bar"></div></div>
@@ -50,17 +51,27 @@
 
   <!-- ============ 結果画面 ============ -->
   <section id="screen-result" class="screen" hidden>
-    <p class="eyebrow">あなたのAI依存度は</p>
+    <p class="eyebrow">あなたのAIタイプは</p>
 
-    <div class="score">
-      <span id="score-num" class="score-num">0</span><span class="score-unit">%</span>
-    </div>
-    <div class="meter"><div id="meter-fill" class="meter-fill"></div></div>
-
+    <p id="result-code" class="result-code"></p>
     <h2 id="result-name" class="result-name"></h2>
     <p id="result-catch" class="result-catch"></p>
+
+    <div id="result-axes" class="axes"></div>
+
     <p id="result-body" class="result-body"></p>
     <p id="result-twist" class="result-twist"></p>
+
+    <div class="matches">
+      <div class="match">
+        <p class="match-label">相性がいい</p>
+        <p id="match-good" class="match-type"></p>
+      </div>
+      <div class="match">
+        <p class="match-label">話が合わない</p>
+        <p id="match-bad" class="match-type"></p>
+      </div>
+    </div>
 
     <div class="actions">
       <a id="btn-share" class="btn btn-main" href="#" target="_blank" rel="noopener">結果をXでシェア</a>
@@ -68,7 +79,7 @@
       <button id="btn-retry" class="btn btn-ghost" type="button">もう一度やる</button>
     </div>
 
-    <p class="note">同じ質問を友達にも。何％だったか聞いてみてください。</p>
+    <p class="note">友達は何タイプか、聞いてみてください。</p>
   </section>
 
   <noscript>
@@ -81,7 +92,7 @@
 </main>
 
 <footer class="foot">
-  <p>© <span id="year">2026</span> AI依存度診断</p>
+  <p>© <span id="year">2026</span> AI16タイプ診断</p>
 </footer>
 
 <script src="assets/quiz-data.js"></script>
