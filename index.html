@@ -3,182 +3,88 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>koron — つくったもの</title>
-<meta name="description" content="koron のホームページ。つくったアプリやツールを置いています。">
+<title>AI依存度診断 — あなたはもう、どこまでAIに預けている？</title>
+<meta name="description" content="6つの質問に答えるだけ。あなたがどこまでAIに脳を預けているか、30秒でわかります。">
 
 <meta property="og:type" content="website">
-<meta property="og:title" content="koron — つくったもの">
-<meta property="og:description" content="koron のホームページ。つくったアプリやツールを置いています。">
+<meta property="og:title" content="AI依存度診断">
+<meta property="og:description" content="6つの質問に答えるだけ。あなたがどこまでAIに脳を預けているか、30秒でわかります。">
+<meta property="og:image" content="https://koron016.github.io/HP/assets/ogp/top.png">
 <meta property="og:locale" content="ja_JP">
-
-<!-- JavaScript が使えるときだけ、スクロール表示の演出を有効にする印をつけます。
-     （この 1 行があるおかげで、JavaScript が止まっても文章は消えません） -->
-<script>document.documentElement.classList.add("js");</script>
+<meta name="twitter:card" content="summary_large_image">
 
 <link rel="stylesheet" href="assets/style.css">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>">
 </head>
 <body>
 
-<a class="skip-link" href="#main">本文へスキップ</a>
+<main class="app">
 
-<header class="site-header">
-  <div class="container header-inner">
-    <!-- ▼ 書き換えポイント：サイト左上の名前 -->
-    <a class="brand" href="#top">koron</a>
-    <button id="theme-toggle" class="theme-toggle" type="button" aria-label="配色を切り替える">
-      <svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true" focusable="false">
-        <circle cx="8" cy="8" r="7" fill="none" stroke="currentColor" stroke-width="1.6"/>
-        <path d="M8 1 A7 7 0 0 1 8 15 Z" fill="currentColor"/>
-      </svg>
-    </button>
-  </div>
-</header>
+  <!-- ============ スタート画面 ============ -->
+  <section id="screen-start" class="screen">
+    <p class="eyebrow">6つの質問・30秒</p>
+    <h1 class="title">
+      AI依存度<span class="title-accent">診断</span>
+    </h1>
+    <p class="lead">
+      気づけば、なんでも聞いていませんか。<br>
+      あなたがどこまでAIに預けているか、測ります。
+    </p>
+    <button id="btn-start" class="btn btn-main" type="button">診断をはじめる</button>
+    <p class="note">結果はその場で表示されます。登録も入力もありません。</p>
+  </section>
 
-<main id="main">
-
-  <!-- ============================================
-       ヒーロー（一番上の大きい部分）
-       ▼ 書き換えポイント：名前・肩書き・ひとこと
-       ============================================ -->
-  <section id="top" class="hero">
-    <div class="container">
-      <p class="hero-eyebrow reveal">つくるひと</p>
-      <h1 class="hero-title reveal">koron</h1>
-      <p class="hero-lead reveal">
-        思いついたものを、とりあえず動く形にするのが好きです。<br>
-        いまは AI を使ったツールづくりを練習中。
-      </p>
-      <div class="hero-actions reveal">
-        <a class="btn btn-primary" href="#works">つくったものを見る</a>
-        <a class="btn btn-ghost" href="https://github.com/koron016" target="_blank" rel="noopener">GitHub</a>
+  <!-- ============ 質問画面 ============ -->
+  <section id="screen-quiz" class="screen" hidden>
+    <div class="progress">
+      <div class="progress-meta">
+        <span id="q-counter">Q1 / 6</span>
+        <button id="btn-back" class="btn-back" type="button">戻る</button>
       </div>
+      <div class="progress-track"><div id="progress-bar" class="progress-bar"></div></div>
     </div>
+
+    <h2 id="q-text" class="question"></h2>
+    <div id="q-choices" class="choices"></div>
   </section>
 
-  <!-- ============================================
-       自己紹介
-       ▼ 書き換えポイント：紹介文と「できること」
-       ============================================ -->
-  <section id="about" class="section">
-    <div class="container">
-      <h2 class="section-title reveal">自己紹介</h2>
-      <div class="prose reveal">
-        <p>
-          プログラミングを独学で触りはじめて、自分が「あったら便利だな」と思ったものを
-          少しずつ形にしています。きれいな設計より、まず動くものを作って、
-          使いながら直していくやり方が性に合っているみたいです。
-        </p>
-        <p>
-          最近は、動画を自動で作るアプリと、SNS の投稿を自動化するツールを作りました。
-          どちらもお金をかけずに動かせるように工夫しています。
-        </p>
-      </div>
+  <!-- ============ 結果画面 ============ -->
+  <section id="screen-result" class="screen" hidden>
+    <p class="eyebrow">あなたのAI依存度は</p>
 
-      <ul class="tag-list reveal">
-        <li>Python</li>
-        <li>Flask</li>
-        <li>JavaScript</li>
-        <li>Node.js</li>
-        <li>SQLite</li>
-        <li>HTML / CSS</li>
-      </ul>
+    <div class="score">
+      <span id="score-num" class="score-num">0</span><span class="score-unit">%</span>
     </div>
+    <div class="meter"><div id="meter-fill" class="meter-fill"></div></div>
+
+    <h2 id="result-name" class="result-name"></h2>
+    <p id="result-catch" class="result-catch"></p>
+    <p id="result-body" class="result-body"></p>
+    <p id="result-twist" class="result-twist"></p>
+
+    <div class="actions">
+      <a id="btn-share" class="btn btn-main" href="#" target="_blank" rel="noopener">結果をXでシェア</a>
+      <button id="btn-copy" class="btn btn-sub" type="button">リンクをコピー</button>
+      <button id="btn-retry" class="btn btn-ghost" type="button">もう一度やる</button>
+    </div>
+
+    <p class="note">同じ質問を友達にも。何％だったか聞いてみてください。</p>
   </section>
 
-  <!-- ============================================
-       つくったもの
-       ▼ 書き換えポイント：作品が増えたら <article> ごとコピーして増やす
-       ============================================ -->
-  <section id="works" class="section section-alt">
-    <div class="container">
-      <h2 class="section-title reveal">つくったもの</h2>
-
-      <div class="works">
-
-        <article class="work reveal">
-          <div class="work-head">
-            <h3 class="work-title">LifeHack AI</h3>
-            <span class="work-year">2026</span>
-          </div>
-          <p class="work-desc">
-            テーマを入力すると、TikTok 向けの縦型ライフハック動画を自動で作ってくれる Web アプリ。
-            台本づくり・画像・ナレーション・動画の書き出しまで、ぜんぶ自動でやります。
-            有料 API を使わなくても動くように作りました。
-          </p>
-          <ul class="work-tags">
-            <li>Python</li>
-            <li>Flask</li>
-            <li>moviepy</li>
-            <li>gTTS</li>
-          </ul>
-          <a class="work-link" href="https://github.com/koron016/HP/tree/claude/ai-video-generation-tool-EWKRY" target="_blank" rel="noopener">
-            コードを見る <span aria-hidden="true">→</span>
-          </a>
-        </article>
-
-        <article class="work reveal">
-          <div class="work-head">
-            <h3 class="work-title">X 自動投稿システム</h3>
-            <span class="work-year">2026</span>
-          </div>
-          <p class="work-desc">
-            X（旧 Twitter）への投稿を自動化するツール。すぐ投稿するだけでなく、
-            日時を指定した予約投稿や、連続ツイート（スレッド）にも対応しています。
-            予約はデータベースに保存するので、パソコンを再起動しても消えません。
-          </p>
-          <ul class="work-tags">
-            <li>Node.js</li>
-            <li>SQLite</li>
-            <li>node-cron</li>
-            <li>CLI</li>
-          </ul>
-          <a class="work-link" href="https://github.com/koron016/HP/tree/claude/x-auto-posting-system-SjUEl" target="_blank" rel="noopener">
-            コードを見る <span aria-hidden="true">→</span>
-          </a>
-        </article>
-
-      </div>
-    </div>
-  </section>
-
-  <!-- ============================================
-       連絡先
-       ▼ 書き換えポイント：SNS や連絡先を足す・消す
-       ============================================ -->
-  <section id="contact" class="section">
-    <div class="container">
-      <h2 class="section-title reveal">連絡先</h2>
-      <p class="prose reveal">
-        つくったものについての感想や、こういうの作れる？ という相談はいつでもどうぞ。
-      </p>
-      <ul class="links reveal">
-        <li>
-          <a href="https://github.com/koron016" target="_blank" rel="noopener">
-            <span class="link-label">GitHub</span>
-            <span class="link-value">@koron016</span>
-          </a>
-        </li>
-        <!-- X アカウントを載せたくなったら、下の行の先頭と末尾のコメント記号を外してください
-        <li>
-          <a href="https://x.com/ここにID" target="_blank" rel="noopener">
-            <span class="link-label">X</span>
-            <span class="link-value">@ここにID</span>
-          </a>
-        </li>
-        -->
-      </ul>
-    </div>
-  </section>
+  <noscript>
+    <p class="noscript">
+      この診断はJavaScriptを使って動きます。ブラウザの設定でJavaScriptを有効にしてから、
+      ページを読み込み直してください。
+    </p>
+  </noscript>
 
 </main>
 
-<footer class="site-footer">
-  <div class="container">
-    <p>&copy; <span id="year">2026</span> koron</p>
-  </div>
+<footer class="foot">
+  <p>© <span id="year">2026</span> AI依存度診断</p>
 </footer>
 
-<script src="assets/main.js"></script>
+<script src="assets/quiz-data.js"></script>
+<script src="assets/quiz.js"></script>
 </body>
 </html>

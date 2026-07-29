@@ -23,7 +23,7 @@ Two consequences that will bite you if you miss them:
 
 | Branch | Contents | History |
 |---|---|---|
-| `claude/claude-md-docs-3bgn2h` | **Homepage** (static site) + this `CLAUDE.md` | From `ba06c52` |
+| `claude/claude-md-docs-3bgn2h` | **AI依存度診断** — static viral quiz site + this `CLAUDE.md` | From `ba06c52` |
 | `claude/claude-md-mm05xnbhma94ky4k-pifkb` | Earlier `CLAUDE.md` only | `ba06c52` |
 | `claude/ai-video-generation-tool-EWKRY` | **LifeHack AI** — Python/Flask TikTok video generator | Descends from `ba06c52` |
 | `claude/x-auto-posting-system-SjUEl` | **X 自動投稿システム** — Node.js CLI auto-poster | **Orphan root** |
@@ -41,40 +41,70 @@ branch, and do not push to a branch you were not assigned.
 
 ---
 
-## Project: Homepage
+## Project: AI依存度診断 (viral quiz site)
 
 *Branch: `claude/claude-md-docs-3bgn2h` (this branch)*
 
-A static personal homepage in Japanese, intended for free hosting on GitHub Pages. Plain HTML/CSS/JS
-with **no build step, no dependencies, and no external requests** — open `index.html` in a browser
-and it works.
+A Japanese share-driven quiz site: six questions, a percentage score, and one of six result types.
+Built to be hosted free on GitHub Pages — plain HTML/CSS/JS, **no runtime dependencies and no
+external requests**. Open `index.html` in a browser and it works.
 
 ```
-index.html          # All page content; edit points marked with ▼ 書き換えポイント comments
-assets/style.css    # All styling; the color palette is the first block in the file
-assets/main.js      # Theme toggle, scroll reveal, footer year
-README.md           # Japanese guide: how to edit and how to publish on GitHub Pages
+assets/quiz-data.js   # ALL content: questions, scoring, result copy. Edit this, not the others.
+assets/quiz.js        # Quiz flow, scoring, share-link building
+assets/style.css      # Styling; palette is the first block
+index.html            # The quiz screens (start / question / result)
+result/<slug>.html    # GENERATED — one static page per result, each with its own OGP tags
+assets/ogp/<slug>.png # GENERATED — 1200x630 share image per result, plus top.png
+tools/build.js        # Regenerates both generated sets from quiz-data.js
+README.md             # Japanese guide: editing, rebuilding, publishing
 ```
 
-### Conventions to preserve
+### The one rule that matters
 
-- **Content must render without JavaScript.** `.reveal` elements are visible by default; the
-  fade-in styles apply only under a `.js` class that an inline script in `<head>` adds. Never move
-  `opacity: 0` back onto a bare `.reveal` selector — a JS failure would blank the whole page. The
-  `.js` class must be set inline in `<head>`, not from `main.js`, or content flashes before hiding.
-- **Keep it dependency-free.** No CDN links, no web fonts, no build tooling. It is served as static
-  files, and the site is meant to stay editable by hand.
-- Colors are CSS custom properties defined once at the top of `style.css`, with light values,
-  a `prefers-color-scheme: dark` block, and an explicit `[data-theme]` block for the manual toggle.
-  Changing a color means editing one variable, not hunting through rules.
-- The `▼ 書き換えポイント` comments are the site's editing UI for a non-technical owner. Keep them
-  accurate when restructuring the markup.
+**`assets/quiz-data.js` is the single source of truth, and `result/` + `assets/ogp/` are generated
+from it.** After changing questions, scoring, or result copy, run:
+
+```bash
+node tools/build.js
+```
+
+Skipping this desyncs the live quiz from what X shows when a result is shared. `build.js` reads
+`quiz-data.js` in a `vm` sandbox (the file assigns `window.QUIZ_DATA`), so the same data drives the
+browser and the generator with no duplication. Do not hand-edit anything in `result/` or
+`assets/ogp/` — it will be overwritten.
+
+Image generation needs `playwright` (`npm install playwright`, optional). Without it `build.js`
+still regenerates the HTML and reports that images were skipped. `CHROMIUM_PATH` overrides the
+browser binary.
+
+### Why it is built this way
+
+- **Per-result static pages exist for share previews.** Static hosting cannot generate OGP images
+  per request, but the result set is finite, so each result gets its own page and pre-rendered
+  image. Collapsing these into one shared URL would make every share show the same picture and cost
+  most of the click-through. This is the core of the design, not an implementation detail.
+- **URLs are resolved at runtime** from `window.location`, so the quiz works from `file://`, from a
+  project subpath, and from a custom domain. `siteUrl` in `quiz-data.js` is only used for the
+  absolute `og:image` URLs baked in at build time — OGP requires absolute URLs.
+- **Result score bands must stay contiguous and cover 0..max.** A gap makes a score fall through to
+  the last result. Current bands cover 0–18 across six results.
+- Design deliberately avoids the generic purple-gradient "AI product" look (2026 trend research:
+  over-polished AI-styled pages blend in). Hence the lime accent, the tilted title block, and the
+  SVG noise overlay.
+
+### Content conventions
+
+Questions are 4-choice, never binary, and there are six of them — both taken from research on what
+actually gets shared (10+ questions increases drop-off; yes/no-only performs poorly). Result copy
+carries a deliberate self-deprecating twist, which measurably increases sharing. Keep new copy in
+Japanese and in that register.
 
 ### Verifying changes
 
-There is no test suite. Check changes by opening the page and confirming: it reads correctly at
-mobile width with no horizontal scroll, both light and dark palettes look right, and the content is
-still visible with JavaScript disabled.
+There is no test suite. Drive the real thing: open `index.html`, play through picking the first
+choice each time (expect 0% / 野生児) and the last choice each time (expect 100% / AIの一部), check
+the back button, and confirm the share URL points at the matching `result/<slug>.html`.
 
 ---
 
