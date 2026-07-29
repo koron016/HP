@@ -407,6 +407,15 @@ body::before {
 
 .match-type { margin: 0; font-size: 0.85rem; line-height: 1.5; }
 
+/* なぜその相手なのか、という一行 */
+.match-why {
+  display: block;
+  margin-top: 0.4rem;
+  font-size: 0.7rem;
+  line-height: 1.55;
+  color: var(--muted);
+}
+
 .match-type a {
   color: var(--text);
   text-decoration: none;
@@ -487,4 +496,42 @@ body::before {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+/* =========================================================
+   言語の切り替え / Language switch
+   ========================================================= */
+
+.langbar {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.3rem;
+  padding: 0.9rem 1.2rem 0;
+  max-width: var(--max);
+  margin-inline: auto;
+}
+
+.lang {
+  padding: 0.25rem 0.7rem;
+  font: inherit;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  color: var(--muted);
+  background: none;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.lang:hover { color: var(--text); }
+
+.lang.is-on {
+  color: var(--text);
+  border-color: var(--line);
+  cursor: default;
 }

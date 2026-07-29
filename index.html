@@ -1,46 +1,44 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>AI16タイプ診断 — あなたはAIと、どういう関係を結んでいる？</title>
-<meta name="description" content="8つの質問で、AIとの付き合い方が16タイプのどれかに分かれます。相性のいいタイプもわかります。">
+<title>WSTI — Work Style Type Indicator</title>
+<meta name="description" content="Eight questions. Sixteen work styles. Find your four-letter type and who you work best with.">
 
 <meta property="og:type" content="website">
-<meta property="og:title" content="AI16タイプ診断">
-<meta property="og:description" content="8つの質問で、AIとの付き合い方が16タイプのどれかに分かれます。相性のいいタイプもわかります。">
-<meta property="og:image" content="https://koron016.github.io/HP/assets/ogp/top.png">
-<meta property="og:locale" content="ja_JP">
+<meta property="og:title" content="WSTI — Work Style Type Indicator">
+<meta property="og:description" content="Eight questions. Sixteen work styles. Find your four-letter type and who you work best with.">
+<meta property="og:image" content="https://koron016.github.io/HP/assets/ogp/top-en.png">
 <meta name="twitter:card" content="summary_large_image">
 
 <link rel="stylesheet" href="assets/style.css">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧭</text></svg>">
 </head>
 <body>
 
+<nav class="langbar">
+  <button type="button" class="lang" data-lang="en">EN</button>
+  <button type="button" class="lang" data-lang="ja">日本語</button>
+</nav>
+
 <main class="app">
 
-  <!-- ============ スタート画面 ============ -->
+  <!-- ============ スタート画面 / Start ============ -->
   <section id="screen-start" class="screen">
-    <p class="eyebrow">8つの質問・1分</p>
-    <h1 class="title">
-      AI<span class="title-accent">16タイプ</span>診断
-    </h1>
-    <p class="lead">
-      どこまで任せるか。信じるか、疑うか。<br>
-      使っていると、人に言うか。<br>
-      あなたとAIの関係を、4つの軸で分けます。
-    </p>
-    <button id="btn-start" class="btn btn-main" type="button">診断をはじめる</button>
-    <p class="note">結果はその場で出ます。登録も入力もありません。</p>
+    <p class="eyebrow" data-ui="eyebrow"></p>
+    <h1 class="title"><span class="title-accent" id="brand"></span></h1>
+    <p class="lead" id="tagline"></p>
+    <button id="btn-start" class="btn btn-main" type="button"></button>
+    <p class="note" data-ui="startNote"></p>
   </section>
 
-  <!-- ============ 質問画面 ============ -->
+  <!-- ============ 質問画面 / Questions ============ -->
   <section id="screen-quiz" class="screen" hidden>
     <div class="progress">
       <div class="progress-meta">
-        <span id="q-counter">Q1 / 8</span>
-        <button id="btn-back" class="btn-back" type="button">戻る</button>
+        <span id="q-counter"></span>
+        <button id="btn-back" class="btn-back" type="button"></button>
       </div>
       <div class="progress-track"><div id="progress-bar" class="progress-bar"></div></div>
     </div>
@@ -49,9 +47,9 @@
     <div id="q-choices" class="choices"></div>
   </section>
 
-  <!-- ============ 結果画面 ============ -->
+  <!-- ============ 結果画面 / Result ============ -->
   <section id="screen-result" class="screen" hidden>
-    <p class="eyebrow">あなたのAIタイプは</p>
+    <p class="eyebrow" data-ui="resultLabel"></p>
 
     <p id="result-code" class="result-code"></p>
     <h2 id="result-name" class="result-name"></h2>
@@ -64,35 +62,35 @@
 
     <div class="matches">
       <div class="match">
-        <p class="match-label">相性がいい</p>
+        <p class="match-label" id="label-good"></p>
         <p id="match-good" class="match-type"></p>
       </div>
       <div class="match">
-        <p class="match-label">話が合わない</p>
+        <p class="match-label" id="label-bad"></p>
         <p id="match-bad" class="match-type"></p>
       </div>
     </div>
 
     <div class="actions">
-      <a id="btn-share" class="btn btn-main" href="#" target="_blank" rel="noopener">結果をXでシェア</a>
-      <button id="btn-copy" class="btn btn-sub" type="button">リンクをコピー</button>
-      <button id="btn-retry" class="btn btn-ghost" type="button">もう一度やる</button>
+      <a id="btn-share" class="btn btn-main" href="#" target="_blank" rel="noopener"></a>
+      <button id="btn-copy" class="btn btn-sub" type="button"></button>
+      <button id="btn-retry" class="btn btn-ghost" type="button"></button>
     </div>
 
-    <p class="note">友達は何タイプか、聞いてみてください。</p>
+    <p class="note" data-ui="resultNote"></p>
   </section>
 
   <noscript>
     <p class="noscript">
-      この診断はJavaScriptを使って動きます。ブラウザの設定でJavaScriptを有効にしてから、
-      ページを読み込み直してください。
+      This test needs JavaScript. Enable it in your browser settings and reload.<br>
+      この診断はJavaScriptを使って動きます。有効にしてから読み込み直してください。
     </p>
   </noscript>
 
 </main>
 
 <footer class="foot">
-  <p>© <span id="year">2026</span> AI16タイプ診断</p>
+  <p>© <span id="year">2026</span> <span id="foot-brand"></span></p>
 </footer>
 
 <script src="assets/quiz-data.js"></script>

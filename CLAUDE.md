@@ -23,7 +23,7 @@ Two consequences that will bite you if you miss them:
 
 | Branch | Contents | History |
 |---|---|---|
-| `claude/claude-md-docs-3bgn2h` | **AI16タイプ診断** — static viral quiz site + this `CLAUDE.md` | From `ba06c52` |
+| `claude/claude-md-docs-3bgn2h` | **WSTI** — bilingual static quiz site + this `CLAUDE.md` | From `ba06c52` |
 | `claude/claude-md-mm05xnbhma94ky4k-pifkb` | Earlier `CLAUDE.md` only | `ba06c52` |
 | `claude/ai-video-generation-tool-EWKRY` | **LifeHack AI** — Python/Flask TikTok video generator | Descends from `ba06c52` |
 | `claude/x-auto-posting-system-SjUEl` | **X 自動投稿システム** — Node.js CLI auto-poster | **Orphan root** |
@@ -41,85 +41,73 @@ branch, and do not push to a branch you were not assigned.
 
 ---
 
-## Project: AI16タイプ診断 (viral quiz site)
+## Project: WSTI — Work Style Type Indicator
 
 *Branch: `claude/claude-md-docs-3bgn2h` (this branch)*
 
-A Japanese share-driven quiz site in the shape of MBTI: eight questions across four binary axes
-produce a four-letter type code (e.g. `DQCP`), one of sixteen. Built to be hosted free on GitHub
-Pages — plain HTML/CSS/JS, **no runtime dependencies and no external requests**. Open `index.html`
-in a browser and it works.
+A bilingual (EN/JA) share-driven quiz in the shape of MBTI: eight questions across four binary axes
+produce a four-letter work-style code (e.g. `DTEC`), one of sixteen. Static, free-hostable on GitHub
+Pages — plain HTML/CSS/JS, **no runtime dependencies and no external requests**.
 
 ```
-assets/quiz-data.js   # ALL content: axes, questions, 16 type write-ups. Edit this, not the others.
-assets/quiz.js        # Quiz flow, axis scoring, code building, compatibility, share links
-assets/style.css      # Styling; palette is the first block
-index.html            # The quiz screens (start / question / result)
-result/<code>.html    # GENERATED — 16 pages, lowercase code, each with its own OGP tags
-assets/ogp/<code>.png # GENERATED — 1200x630 share image per type, plus top.png (17 total)
-tools/build.js        # Validates quiz-data.js, then regenerates both generated sets
-README.md             # Japanese guide: axes, editing, rebuilding, publishing
+assets/quiz-data.js       # ALL content, every string as { ja, en }. Edit this, not the others.
+assets/quiz.js            # Language pick, axis scoring, code building, compatibility, share links
+assets/style.css          # Styling; palette is the first block
+index.html                # Quiz screens; all visible text is filled in by JS from quiz-data.js
+result/<lang>/<code>.html # GENERATED — 16 codes x 2 languages, each with its own OGP tags
+assets/ogp/<code>-<lang>.png  # GENERATED — 1200x630 per type per language, plus top-<lang>.png
+tools/build.js            # Validates quiz-data.js, then regenerates both generated sets
 ```
 
-### The two rules that matter
+### The three rules that matter
 
-**1. `assets/quiz-data.js` is the single source of truth**, and `result/` + `assets/ogp/` are
-generated from it. After any content change, run:
+**1. `assets/quiz-data.js` is the single source of truth.** `result/` and `assets/ogp/` are generated
+from it; both directories are wiped and rewritten on every build, so a renamed type never leaves a
+stale page behind. After any content change run `node tools/build.js`. Skipping it desyncs the live
+quiz from what X shows when a result is shared. Never hand-edit generated output.
 
-```bash
-node tools/build.js
-```
+**2. Axis scores must never total zero.** Zero means neither side wins and the code cannot be built.
+Each axis has two questions, the first scoring odd values (±1, ±3) and the second even (±2, ±4), so
+every total is odd. `build.js` enumerates every answer combination per axis and exits non-zero if
+zero is reachable. Preserve the odd/even split.
 
-Skipping this desyncs the live quiz from what X shows when a result is shared. `build.js` reads
-`quiz-data.js` in a `vm` sandbox (the file assigns `window.QUIZ_DATA`), so the same data drives the
-browser and the generator. Both output directories are wiped and rewritten, so renaming a type
-never leaves a stale page behind. Do not hand-edit anything in `result/` or `assets/ogp/`.
+**3. Every user-facing string is `{ ja, en }`.** `build.js` walks the data and fails on any missing
+translation, because a silent fallback would ship one language with English text mixed in. `index.html`
+therefore carries almost no literal copy — `quiz.js` fills it from the data.
 
-**2. Axis scores must never total zero.** A zero means neither side wins and the type code cannot be
-built. This is structural, not stylistic: each axis has two questions, the first scoring odd values
-(±1, ±3) and the second even (±2, ±4), so every total is odd. `build.js` enumerates every answer
-combination per axis and **exits non-zero if any path can reach zero**, or if any of the 16 codes
-lacks a write-up. Preserve the odd/even split when editing questions.
-
-Image generation needs `playwright` (`npm install playwright`, optional). Without it `build.js`
-still validates and regenerates the HTML, reporting that images were skipped. `CHROMIUM_PATH`
-overrides the browser binary.
+Image generation needs `playwright` (`npm install playwright`, optional); without it `build.js` still
+validates and regenerates HTML. `CHROMIUM_PATH` overrides the browser binary.
 
 ### Why it is built this way
 
-- **MBTI shape over a single percentage.** An earlier version scored one 0–100% "AI依存度" axis.
-  The four-letter code replaced it because a code is a label a user can claim ("私はDQCP"), which a
-  percentage is not, and sixteen types give people something to compare. Compatibility pairs exist
-  for the same reason.
-- **Compatibility is computed, not authored.** Good match flips axes 0 and 2; bad match flips all
-  four. Both are reciprocal, so pairs always agree with each other. Adding hand-written pairs to
-  `quiz-data.js` would drift out of sync — derive them instead.
+Market research drove these decisions; do not undo them casually.
+
+- **The four-letter code is the product.** 16Personalities sits at ~19M visits/month with 38% direct
+  traffic, and in Korea MBTI functions as social currency — a field in Instagram bios and dating
+  profiles. The label travels outside the site; the test is only the entry point. An earlier version
+  scored a single 0–100% percentage, which nobody can claim as an identity.
+- **Accuracy is explicitly not the differentiator.** MBTI's own retest reliability is poor (39–76%
+  get a different type within five weeks) and Big Five, which is validated, stays unshareable because
+  continuous traits produce no label. Competing on correctness would lose on both fronts.
+- **Bilingual from the start.** A Japanese-only site cannot become a global topic, and the US is
+  16Personalities' top market with Japan second. English is the default language; Japanese is picked
+  automatically from `navigator.language`, overridable by `?lang=` and remembered in `localStorage`.
+- **Naming mirrors MBTI deliberately.** SBTI (a satirical MBTI derivative) reached millions on TikTok
+  and Weibo in April 2026 using exactly this pattern.
 - **Per-type static pages exist for share previews.** Static hosting cannot generate OGP images per
-  request, but the type set is finite, so each type gets its own page and pre-rendered image.
-  Collapsing these into one URL would make every share show the same picture and cost most of the
-  click-through. This is the core of the design, not an implementation detail.
-- **URLs are resolved at runtime** from `window.location`, so the quiz works from `file://`, from a
-  project subpath, and from a custom domain. `siteUrl` in `quiz-data.js` is used only for the
-  absolute `og:image` URLs baked in at build time — OGP requires absolute URLs.
-- Design deliberately avoids the generic purple-gradient "AI product" look (2026 trend research:
-  over-polished AI-styled pages blend in). Hence the lime accent, the tilted title block, and the
-  SVG noise overlay.
-
-### Content conventions
-
-Eight questions, four choices each, never binary — from research on what gets shared (10+ questions
-increases drop-off; yes/no-only performs poorly). Eight is already above the 4–6 ideal and exists
-only because four axes need two questions each; do not add more. Every type write-up ends with a
-self-deprecating `twist`, which measurably increases sharing. Keep new copy in Japanese and in that
-register.
+  request, but the type set is finite, so each type gets a page and a pre-rendered image per language.
+- **Compatibility is computed, not authored.** Good match flips axes 0 and 3; bad match flips 1 and 2.
+  Both are involutions, so pairs always agree, and neither can return the type itself.
+- **URLs resolve at runtime** from `window.location`, so the quiz works from `file://`, a project
+  subpath, or a custom domain. `siteUrl` is used only for absolute `og:image` URLs at build time.
 
 ### Verifying changes
 
-There is no test suite. `node tools/build.js` validates the data and is the closest thing to one —
-run it first. Then drive the real thing: open `index.html`, answer all-first-choice (expect `SQOH`
-孤高の職人) and all-last-choice (expect `DTCP` AI伝道師), check the back button, confirm the four
-axis bars render, and confirm the share URL and both compatibility links point at existing
-`result/<code>.html` files.
+There is no test suite; `node tools/build.js` is the closest thing and must pass first. Then drive it:
+open `index.html`, answer all-first-choice (expect `ISEC`) and all-last-choice (expect `DTLB`), switch
+languages mid-result, and confirm share and compatibility links resolve to existing pages. Worth
+re-running when scoring changes: enumerate all 65,536 answer paths and assert no ties and all 16 codes
+reachable.
 
 ---
 
