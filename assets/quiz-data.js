@@ -61,6 +61,32 @@ window.QUIZ_DATA = {
     noscript: {
       ja: "この診断はJavaScriptを使って動きます。ブラウザの設定で有効にしてから読み込み直してください。",
       en: "This test needs JavaScript. Enable it in your browser settings and reload."
+    },
+
+    /* --- チーム分布のページ / Team page --- */
+    teamLink:    { ja: "チームの傾向を見る", en: "See your team's shape" },
+    teamTitle:   { ja: "チーム分布", en: "Team Shape" },
+    teamLead: {
+      ja: "メンバーのタイプを選ぶと、チームの偏りと、足りていない持ち味が出ます。誰も評価しません。",
+      en: "Add your team's types to see where the team leans and what it's missing. Nobody is being scored."
+    },
+    teamPick:    { ja: "タイプを選んで追加", en: "Add a type" },
+    teamMembers: { ja: "メンバー", en: "Team" },
+    teamEmpty:   { ja: "上からタイプを選んでください。2人以上で傾向が出ます。", en: "Pick types above. Two or more shows the shape." },
+    teamRemove:  { ja: "外す", en: "Remove" },
+    teamClear:   { ja: "全部消す", en: "Clear all" },
+    teamShare:   { ja: "この結果のリンクをコピー", en: "Copy a link to this" },
+    teamShareX:  { ja: "チームの傾向をXでシェア", en: "Share your team on X" },
+    teamBalance: { ja: "チームの偏り", en: "Where the team leans" },
+    teamGap:     { ja: "足りていない持ち味", en: "What the team is short of" },
+    teamGapNone: { ja: "4つの軸すべてに、両側の人がいます。バランスの取れたチームです。", en: "Both sides are represented on all four axes. This is a balanced team." },
+    teamPair:    { ja: "この2人の相性", en: "How these two work together" },
+    teamBalanced:{ ja: "拮抗", en: "Balanced" },
+    teamSkewed:  { ja: "偏り", en: "Skewed" },
+    teamTakeTest:{ ja: "自分のタイプを調べる", en: "Find your own type" },
+    teamNote: {
+      ja: "選考には使わないでください。この診断は答えを取り繕えるため、合否の判断には向きません。入社後の相互理解や配属の材料としてお使いください。",
+      en: "Do not use this for hiring decisions. The answers are easy to game, so it cannot support a pass/fail judgment. It is built for mutual understanding and team composition."
     }
   },
 

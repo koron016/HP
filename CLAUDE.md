@@ -57,8 +57,22 @@ assets/style.css          # Styling; palette is the first block
 index.html                # Quiz screens; all visible text is filled in by JS from quiz-data.js
 result/<lang>/<code>.html # GENERATED — 16 codes x 2 languages, each with its own OGP tags
 assets/ogp/<code>-<lang>.png  # GENERATED — 1200x630 per type per language, plus top-<lang>.png
+team.html, assets/team.js # Team-shape page: axis distribution, gaps, pair compatibility
 tools/build.js            # Validates quiz-data.js, then regenerates both generated sets
 ```
+
+### The team page is deliberately not a selection tool
+
+`team.html` takes a list of type codes in `?codes=` and shows where a team leans and which side of
+an axis nobody covers. It is positioned for post-hire understanding, team composition, and employer
+branding — never for hiring decisions, and the page carries a permanent notice saying so. Three
+reasons, all load-bearing: the choices are transparently directional so answers are trivially gamed;
+there is no lie scale (real instruments repeat rephrased items to catch inconsistency) and twenty
+questions leaves no room for one; and MBTI's own publisher calls selection use unethical and revokes
+licences over it. Virality makes gaming worse, not better, so selection use and reach are in direct
+conflict — the team page resolves that by moving the company-facing use outside the hiring gate,
+where employers have an incentive to publish their own distribution and become a distribution
+channel. Do not add scoring, ranking, or pass/fail affordances to this page.
 
 ### The three rules that matter
 

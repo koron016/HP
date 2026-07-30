@@ -110,6 +110,7 @@
     labelWatch: document.getElementById("label-watch"),
     labelFits: document.getElementById("label-fits"),
     labelPitch: document.getElementById("label-pitch"),
+    linkTeam: document.getElementById("link-team"),
     brand: document.getElementById("brand"),
     tagline: document.getElementById("tagline"),
     footBrand: document.getElementById("foot-brand"),
@@ -144,6 +145,8 @@
     el.labelPitch.textContent = t(DATA.ui.pitch);
     el.labelGood.textContent = t(DATA.match.good.label);
     el.labelBad.textContent = t(DATA.match.bad.label);
+    el.linkTeam.textContent = t(DATA.ui.teamLink);
+    el.linkTeam.href = "team.html?lang=" + lang;
     document.title = t(DATA.meta.title);
 
     document.querySelectorAll(".lang").forEach(function (b) {

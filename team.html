@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Team Shape — WSTI</title>
+<meta name="description" content="Add your team's work-style types to see where the team leans and what it's missing.">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="Team Shape — WSTI">
+<meta property="og:description" content="Add your team's work-style types to see where the team leans and what it's missing.">
+<meta property="og:image" content="https://koron016.github.io/HP/assets/ogp/top-en.png">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="stylesheet" href="assets/style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧭</text></svg>">
+</head>
+<body>
+
+<nav class="langbar">
+  <button type="button" class="lang" data-lang="en">EN</button>
+  <button type="button" class="lang" data-lang="ja">日本語</button>
+</nav>
+
+<main class="app app-wide">
+  <section class="screen">
+
+    <p class="eyebrow" id="brand"></p>
+    <h1 class="title title-plain" data-ui="teamTitle"></h1>
+    <p class="lead" data-ui="teamLead"></p>
+
+    <!-- タイプを選ぶ -->
+    <p class="panel-label" data-ui="teamPick"></p>
+    <div id="picker" class="picker"></div>
+
+    <!-- 選んだメンバー -->
+    <div class="team-head">
+      <p class="panel-label" data-ui="teamMembers"></p>
+      <button id="btn-clear" class="btn-back" type="button"></button>
+    </div>
+    <div id="members" class="members"></div>
+    <p id="members-empty" class="note" data-ui="teamEmpty"></p>
+
+    <!-- 結果 -->
+    <div id="team-result" hidden>
+      <div class="panel">
+        <p class="panel-label" data-ui="teamBalance"></p>
+        <div id="team-axes" class="axes"></div>
+      </div>
+
+      <div class="panel">
+        <p class="panel-label" data-ui="teamGap"></p>
+        <ul id="team-gap" class="bullets is-warn"></ul>
+      </div>
+
+      <div id="pair-block" class="panel is-pitch" hidden>
+        <p class="panel-label" data-ui="teamPair"></p>
+        <p id="pair-verdict" class="pitch-text"></p>
+        <p id="pair-why" class="panel-note"></p>
+      </div>
+
+      <div class="actions">
+        <a id="btn-share" class="btn btn-main" href="#" target="_blank" rel="noopener"></a>
+        <button id="btn-copy" class="btn btn-sub" type="button"></button>
+      </div>
+    </div>
+
+    <p class="panel-note disclaimer" data-ui="teamNote"></p>
+
+    <div class="actions cta">
+      <a id="btn-test" class="btn btn-ghost" href="index.html"></a>
+    </div>
+
+  </section>
+</main>
+
+<footer class="foot">
+  <p>© <span id="year">2026</span> <span id="foot-brand"></span></p>
+</footer>
+
+<script src="assets/quiz-data.js"></script>
+<script src="assets/team.js"></script>
+</body>
+</html>
