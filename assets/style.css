@@ -535,3 +535,77 @@ body::before {
   border-color: var(--line);
   cursor: default;
 }
+
+/* =========================================================
+   結果の追加ブロック（強み・注意点・環境・自己PR）
+   Result panels: strengths, watch-outs, fit, résumé line
+   ========================================================= */
+
+.panel {
+  padding: 1.1rem 1.2rem;
+  margin-bottom: 0.7rem;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+.panel-label {
+  margin: 0 0 0.6rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: var(--accent);
+}
+
+.panel-body { margin: 0; font-size: 0.9rem; color: var(--muted); }
+
+.bullets {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.45rem;
+}
+
+.bullets li {
+  position: relative;
+  padding-left: 1.1rem;
+  font-size: 0.9rem;
+  line-height: 1.65;
+}
+
+.bullets li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.72em;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+/* 注意点は色を変えて、褒めているだけに見えないようにする */
+.bullets.is-warn li { color: var(--muted); }
+.bullets.is-warn li::before { background: var(--mid); }
+
+/* 自己PR欄。ここだけ枠を立てて、持ち帰る一文だと分かるようにする */
+.panel.is-pitch {
+  margin-top: 1.1rem;
+  margin-bottom: 2rem;
+  border-color: var(--accent);
+}
+
+.pitch-text {
+  margin: 0 0 0.7rem;
+  font-size: 0.98rem;
+  line-height: 1.85;
+  font-weight: 700;
+}
+
+.panel-note {
+  margin: 0;
+  font-size: 0.72rem;
+  line-height: 1.6;
+  color: var(--muted);
+}

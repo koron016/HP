@@ -66,6 +66,9 @@ const sides = (code) =>
     };
   });
 
+const bullets = (items) =>
+  items.map((x) => `<li>${escapeHtml(x)}</li>`).join("");
+
 const escapeHtml = (s) =>
   String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;")
            .replace(/>/g, "&gt;").replace(/"/g, "&quot;");
@@ -199,6 +202,27 @@ ${DATA.langs.map((l) =>
 
       <p class="result-body">${escapeHtml(t(ty.body, lang))}</p>
       <p class="result-twist">${escapeHtml(t(ty.twist, lang))}</p>
+    </div>
+
+    <div class="panel">
+      <p class="panel-label">${escapeHtml(t(DATA.ui.strengths, lang))}</p>
+      <ul class="bullets">${bullets(t(ty.strengths, lang))}</ul>
+    </div>
+
+    <div class="panel">
+      <p class="panel-label">${escapeHtml(t(DATA.ui.watchOut, lang))}</p>
+      <ul class="bullets is-warn">${bullets(t(ty.watchOut, lang))}</ul>
+    </div>
+
+    <div class="panel">
+      <p class="panel-label">${escapeHtml(t(DATA.ui.fits, lang))}</p>
+      <p class="panel-body">${escapeHtml(t(ty.fits, lang))}</p>
+    </div>
+
+    <div class="panel is-pitch">
+      <p class="panel-label">${escapeHtml(t(DATA.ui.pitch, lang))}</p>
+      <p class="pitch-text">${escapeHtml(t(ty.pitch, lang))}</p>
+      <p class="panel-note">${escapeHtml(t(DATA.ui.pitchNote, lang))}</p>
     </div>
 
     <div class="matches">${matchBlocks}

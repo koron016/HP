@@ -45,8 +45,9 @@ branch, and do not push to a branch you were not assigned.
 
 *Branch: `claude/claude-md-docs-3bgn2h` (this branch)*
 
-A bilingual (EN/JA) share-driven quiz in the shape of MBTI: eight questions across four binary axes
-produce a four-letter work-style code (e.g. `DTEC`), one of sixteen. Static, free-hostable on GitHub
+A bilingual (EN/JA) share-driven quiz in the shape of MBTI: twenty questions across four binary axes
+produce a four-letter work-style code (e.g. `DTEC`), one of sixteen. Each type also carries strengths,
+blind spots, a fitting environment, and a résumé line, so the result is usable in a job search. Static, free-hostable on GitHub
 Pages — plain HTML/CSS/JS, **no runtime dependencies and no external requests**.
 
 ```
@@ -67,9 +68,9 @@ stale page behind. After any content change run `node tools/build.js`. Skipping 
 quiz from what X shows when a result is shared. Never hand-edit generated output.
 
 **2. Axis scores must never total zero.** Zero means neither side wins and the code cannot be built.
-Each axis has two questions, the first scoring odd values (±1, ±3) and the second even (±2, ±4), so
-every total is odd. `build.js` enumerates every answer combination per axis and exits non-zero if
-zero is reachable. Preserve the odd/even split.
+All choice values are odd (±1, ±3) and each axis carries an odd number of questions (five), so every
+axis total is odd. `build.js` enumerates all 1,024 combinations per axis and exits non-zero if zero is
+reachable. Keep both halves of that rule when editing questions.
 
 **3. Every user-facing string is `{ ja, en }`.** `build.js` walks the data and fails on any missing
 translation, because a silent fallback would ship one language with English text mixed in. `index.html`
@@ -86,6 +87,10 @@ Market research drove these decisions; do not undo them casually.
   traffic, and in Korea MBTI functions as social currency — a field in Instagram bios and dating
   profiles. The label travels outside the site; the test is only the entry point. An earlier version
   scored a single 0–100% percentage, which nobody can claim as an identity.
+- **Twenty questions, not eight.** An earlier cut used eight, taken from Japanese research on campaign
+  quizzes favouring 4–6. That research is about throwaway promo quizzes. Everything that actually
+  scaled is long: 16Personalities runs ~60 questions, SBTI 32. At eight the result reads as a guess and
+  the axis bars only reach a handful of positions; at five per axis they resolve to 15 steps a side.
 - **Accuracy is explicitly not the differentiator.** MBTI's own retest reliability is poor (39–76%
   get a different type within five weeks) and Big Five, which is validated, stays unshareable because
   continuous traits produce no label. Competing on correctness would lose on both fronts.
@@ -105,7 +110,8 @@ Market research drove these decisions; do not undo them casually.
 
 There is no test suite; `node tools/build.js` is the closest thing and must pass first. Then drive it:
 open `index.html`, answer all-first-choice (expect `ISEC`) and all-last-choice (expect `DTLB`), switch
-languages mid-result, and confirm share and compatibility links resolve to existing pages. Worth
+languages mid-result, confirm the strengths/watch-out/fit/résumé panels fill, and confirm share and
+compatibility links resolve to existing pages. Worth
 re-running when scoring changes: enumerate all 65,536 answer paths and assert no ties and all 16 codes
 reachable.
 

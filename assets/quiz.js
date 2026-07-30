@@ -102,6 +102,14 @@
     bad: document.getElementById("match-bad"),
     labelGood: document.getElementById("label-good"),
     labelBad: document.getElementById("label-bad"),
+    strengths: document.getElementById("result-strengths"),
+    watch: document.getElementById("result-watch"),
+    fits: document.getElementById("result-fits"),
+    pitch: document.getElementById("result-pitch"),
+    labelStrengths: document.getElementById("label-strengths"),
+    labelWatch: document.getElementById("label-watch"),
+    labelFits: document.getElementById("label-fits"),
+    labelPitch: document.getElementById("label-pitch"),
     brand: document.getElementById("brand"),
     tagline: document.getElementById("tagline"),
     footBrand: document.getElementById("foot-brand"),
@@ -130,6 +138,10 @@
     el.btnShare.textContent = t(DATA.ui.share);
     el.btnCopy.textContent = t(DATA.ui.copy);
     el.btnRetry.textContent = t(DATA.ui.retry);
+    el.labelStrengths.textContent = t(DATA.ui.strengths);
+    el.labelWatch.textContent = t(DATA.ui.watchOut);
+    el.labelFits.textContent = t(DATA.ui.fits);
+    el.labelPitch.textContent = t(DATA.ui.pitch);
     el.labelGood.textContent = t(DATA.match.good.label);
     el.labelBad.textContent = t(DATA.match.bad.label);
     document.title = t(DATA.meta.title);
@@ -205,6 +217,11 @@
     el.body.textContent = t(type.body);
     el.twist.textContent = t(type.twist);
 
+    fillList(el.strengths, t(type.strengths));
+    fillList(el.watch, t(type.watchOut));
+    el.fits.textContent = t(type.fits);
+    el.pitch.textContent = t(type.pitch);
+
     renderAxes(scores);
     renderMatch(code);
     show(el.result);
@@ -218,6 +235,16 @@
       "&url=" + encodeURIComponent(url);
 
     el.btnCopy.dataset.url = url;
+  }
+
+  /* 箇条書きを入れ替える */
+  function fillList(node, items) {
+    node.innerHTML = "";
+    items.forEach(function (text) {
+      var li = document.createElement("li");
+      li.textContent = text;
+      node.appendChild(li);
+    });
   }
 
   /* 4本の棒グラフ。まんなかを基準に、寄っている側へ伸ばす */
