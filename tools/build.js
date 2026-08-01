@@ -13,6 +13,7 @@
 const fs = require("fs");
 const path = require("path");
 const vm = require("vm");
+const { buildCharacter } = require("../assets/character.js");
 
 const ROOT = path.resolve(__dirname, "..");
 const OUT_PAGES = path.join(ROOT, "result");
@@ -193,6 +194,7 @@ ${DATA.langs.map((l) =>
 
     <div class="share-card">
       <p class="eyebrow">${escapeHtml(t(DATA.meta.brand, lang))}</p>
+      <div class="char">${buildCharacter(code, { size: 132 })}</div>
       <p class="result-code">${code}</p>
       <h1 class="result-name">${escapeHtml(name)}</h1>
       <p class="result-catch">${escapeHtml(t(ty.catch, lang))}</p>
@@ -278,14 +280,17 @@ function cardHtml(code, lang) {
   .code { font-size: 118px; font-weight: 900; letter-spacing: 0.06em; color: #c8f24e; line-height: 1; margin-bottom: 16px; }
   .name { font-size: 62px; font-weight: 900; letter-spacing: -0.02em; margin-bottom: 12px; }
   .catch { font-size: 30px; font-weight: 700; color: #8f8f9e; margin-bottom: 40px; }
-  .rows { display: flex; gap: 14px; margin-bottom: 32px; }
-  .row { flex: 1; padding: 16px 20px; background: #16161c; border: 1px solid #2a2a34; border-radius: 12px; }
+  .code, .name, .catch { max-width: 680px; }
+  .rows { display: flex; gap: 14px; margin-bottom: 32px; max-width: 680px; }
+  .row { flex: 1; padding: 14px 16px; background: #16161c; border: 1px solid #2a2a34; border-radius: 12px; }
   .lbl { display: block; font-size: 19px; font-weight: 700; letter-spacing: 0.08em; color: #8f8f9e; margin-bottom: 4px; }
-  .val { display: block; font-size: 30px; font-weight: 800; }
+  .val { display: block; font-size: 27px; font-weight: 800; white-space: nowrap; }
   .brand { font-size: 26px; font-weight: 800; letter-spacing: 0.04em; }
   .brand span { color: #0d0d11; background: #c8f24e; padding: 2px 10px; border-radius: 4px; }
+  .figure { position: absolute; right: 90px; top: 50%; transform: translateY(-50%); }
 </style></head>
 <body>
+  <div class="figure">${buildCharacter(code, { size: 300 })}</div>
   <div class="code">${code}</div>
   <div class="name">${escapeHtml(t(ty.name, lang))}</div>
   <div class="catch">${escapeHtml(t(ty.catch, lang))}</div>

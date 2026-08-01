@@ -705,3 +705,57 @@ body::before {
   border-bottom: 1px solid var(--line);
 }
 .quiet-link:hover { color: var(--text); border-bottom-color: var(--accent); }
+
+/* =========================================================
+   キャラ / Character
+   ========================================================= */
+
+.char {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 0.4rem;
+}
+
+.wsti-char { display: block; }
+
+/* 選択ボタンの中に小さく並べる */
+.pick {
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.pick .wsti-char { flex-shrink: 0; }
+
+.pick-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.05rem;
+  min-width: 0;
+}
+
+.chip .wsti-char { margin-right: 0.1rem; }
+
+/* =========================================================
+   偏りの処方箋 / Risk and remedy
+   ========================================================= */
+
+.panel.is-risk {
+  border-color: var(--mid);
+  background: linear-gradient(var(--panel), var(--panel)) padding-box;
+}
+
+.panel.is-risk .panel-label { color: var(--mid); }
+
+.risk-text {
+  margin: 0 0 1rem;
+  font-size: 0.95rem;
+  line-height: 1.8;
+  font-weight: 700;
+}
+
+.panel-label.is-fix {
+  margin-top: 0;
+  margin-bottom: 0.4rem;
+  color: var(--low);
+}

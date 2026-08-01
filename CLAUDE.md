@@ -57,9 +57,27 @@ assets/style.css          # Styling; palette is the first block
 index.html                # Quiz screens; all visible text is filled in by JS from quiz-data.js
 result/<lang>/<code>.html # GENERATED — 16 codes x 2 languages, each with its own OGP tags
 assets/ogp/<code>-<lang>.png  # GENERATED — 1200x630 per type per language, plus top-<lang>.png
-team.html, assets/team.js # Team-shape page: axis distribution, gaps, pair compatibility
+team.html, assets/team.js # Team-shape page: axis distribution, gaps, risk/remedy, pair compatibility
+assets/character.js       # Derives each type's character art from its four-letter code
 tools/build.js            # Validates quiz-data.js, then regenerates both generated sets
 ```
+
+### What separates this from MBTI is the remedy, not the label
+
+Four axes, sixteen types and a compatibility pair are MBTI's structure, and on its own that is a
+clone. The difference is `risks` in `quiz-data.js`: when a team leans 75% or harder on an axis, the
+team page names the concrete failure that composition produces and the concrete counter-move. MBTI
+cannot do this — it reads individuals, so it has nothing to say about what a *combination* causes.
+Keep any new team-level output in that shape: a failure mode plus a counter-move, never a label
+alone.
+
+### Character art is derived, not drawn
+
+`assets/character.js` builds each type's figure from its code — head shape from axis 0, eyes from
+axis 1, lean from axis 2, arms from axis 3. Nothing is hand-illustrated, so all sixteen are
+guaranteed distinct and mutually consistent, and changing the axes cannot leave stale art behind.
+It runs in the browser and under Node (build.js requires it for result pages and share images). If
+you add a type or an axis, extend the derivation rather than adding an image file.
 
 ### The team page is deliberately not a selection tool
 

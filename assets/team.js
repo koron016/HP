@@ -69,6 +69,7 @@
     result: document.getElementById("team-result"),
     axes: document.getElementById("team-axes"),
     gap: document.getElementById("team-gap"),
+    risk: document.getElementById("risk-block"),
     pairBlock: document.getElementById("pair-block"),
     pairVerdict: document.getElementById("pair-verdict"),
     pairWhy: document.getElementById("pair-why"),
@@ -107,7 +108,10 @@
       var btn = document.createElement("button");
       btn.type = "button";
       btn.className = "pick";
-      btn.innerHTML = "<strong>" + code + "</strong><span>" + t(DATA.types[code].name) + "</span>";
+      btn.innerHTML =
+        (window.buildCharacter ? window.buildCharacter(code, { size: 34 }) : "") +
+        "<span class=\"pick-text\"><strong>" + code + "</strong>" +
+        "<span>" + t(DATA.types[code].name) + "</span></span>";
       btn.addEventListener("click", function () {
         members.push(code);
         render();
@@ -213,6 +217,71 @@
     });
   }
 
+  /* ---------- この偏りで何が起きるか、どうするか ----------
+     チームが片側に75%以上寄った軸だけ出します。 */
+
+  function renderRisks() {
+    el.risk.innerHTML = "";
+
+    /* 全員同じタイプなら、まずそれを言う */
+    var unique = members.filter(function (c, i) { return members.indexOf(c) === i; });
+    if (unique.length === 1) {
+      el.risk.appendChild(riskPanel(t(DATA.ui.teamSame), null, null));
+    }
+
+    var hits = [];
+    DATA.axes.forEach(function (axis, i) {
+      var right = members.filter(function (c) { return c[i] === axis.right.key; }).length;
+      var rightPct = Math.round((right / members.length) * 100);
+      var lean = Math.abs(rightPct - 50) * 2;
+      if (lean < 50) return;
+      var side = rightPct > 50 ? axis.right : axis.left;
+      var r = DATA.risks[side.key];
+      if (r) hits.push({ axis: axis, side: side, r: r });
+    });
+
+    if (!hits.length && unique.length !== 1) {
+      el.risk.appendChild(riskPanel(t(DATA.ui.teamRiskNone), null, null));
+      return;
+    }
+
+    hits.forEach(function (h) {
+      el.risk.appendChild(riskPanel(
+        t(h.axis.title) + " — " + t(h.side.label),
+        t(h.r.risk),
+        t(h.r.fix)
+      ));
+    });
+  }
+
+  function riskPanel(heading, risk, fix) {
+    var box = document.createElement("div");
+    box.className = "panel is-risk";
+
+    var head = document.createElement("p");
+    head.className = "panel-label";
+    head.textContent = risk ? t(DATA.ui.teamRisk) + " · " + heading : heading;
+    box.appendChild(head);
+
+    if (risk) {
+      var r = document.createElement("p");
+      r.className = "risk-text";
+      r.textContent = risk;
+      box.appendChild(r);
+
+      var fl = document.createElement("p");
+      fl.className = "panel-label is-fix";
+      fl.textContent = t(DATA.ui.teamFix);
+      box.appendChild(fl);
+
+      var f = document.createElement("p");
+      f.className = "panel-body";
+      f.textContent = fix;
+      box.appendChild(f);
+    }
+    return box;
+  }
+
   /* ---------- ちょうど2人なら、相性を出す ---------- */
 
   function flip(code, axisIndexes) {
@@ -269,6 +338,7 @@
     el.result.hidden = false;
     renderAxes();
     renderGap();
+    renderRisks();
     renderPair();
 
     var url = window.location.href;

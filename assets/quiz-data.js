@@ -84,6 +84,10 @@ window.QUIZ_DATA = {
     teamBalanced:{ ja: "拮抗", en: "Balanced" },
     teamSkewed:  { ja: "偏り", en: "Skewed" },
     teamTakeTest:{ ja: "自分のタイプを調べる", en: "Find your own type" },
+    teamRisk:    { ja: "この偏りで起きること", en: "What this costs you" },
+    teamFix:     { ja: "打ち手", en: "What to do" },
+    teamRiskNone:{ ja: "どの軸にも大きな偏りがありません。今のところ構造的な弱点は出ていません。", en: "No axis is badly skewed. No structural weak point right now." },
+    teamSame:    { ja: "全員が同じタイプです。見えている景色が同じなので、抜けにも全員で気づけません。", en: "Everyone is the same type. You all see the same things — which means you all miss the same things." },
     teamNote: {
       ja: "選考には使わないでください。この診断は答えを取り繕えるため、合否の判断には向きません。入社後の相互理解や配属の材料としてお使いください。",
       en: "Do not use this for hiring decisions. The answers are easy to game, so it cannot support a pass/fail judgment. It is built for mutual understanding and team composition."
@@ -130,6 +134,44 @@ window.QUIZ_DATA = {
         ja: "決め方も立ち位置も同じなのに、進め方と締切の感覚だけが逆",
         en: "Same instincts on deciding and standing, but the opposite rhythm on working and timing"
       }
+    }
+  },
+
+  /* --- 偏ったときに起きること と、その打ち手 ---
+     チームが片側に75%以上寄ったときに出します。ここがMBTIにはない部分で、
+     「誰がどのタイプか」ではなく「この組み合わせだと何が起きるか」を言います。 --- */
+  risks: {
+    I: {
+      risk: { ja: "検証が抜けたまま進み、後になって前提が崩れる", en: "You move without checking, and the premise collapses later" },
+      fix:  { ja: "決める前に「根拠は？」と聞く役を、会議ごとに1人決めておく", en: "Assign one person per meeting whose job is to ask “what's this based on?”" }
+    },
+    D: {
+      risk: { ja: "材料が揃うまで決まらず、判断が遅れて機会を逃す", en: "Nothing gets decided until the evidence is in, and you miss the window" },
+      fix:  { ja: "「この日までに決める」と、情報が揃う前に期限を切っておく", en: "Set the decision date before the information arrives, not after" }
+    },
+    S: {
+      risk: { ja: "仕事が属人化し、その人が抜けた瞬間に止まる", en: "Work lives in individual heads, and stops dead when someone leaves" },
+      fix:  { ja: "週に一度、何をやっているかを短く共有する時間を作る", en: "Once a week, a short round where everyone says what they're actually doing" }
+    },
+    T: {
+      risk: { ja: "相談と会議ばかりで、手が動く時間が残らない", en: "So much talking that nobody has time to make anything" },
+      fix:  { ja: "相談しない時間帯を全員で決めて、そこは声をかけない", en: "Agree on hours when nobody interrupts anyone" }
+    },
+    E: {
+      risk: { ja: "想定外が起きたときに、土壇場で踏ん張る人がいない", en: "When something unexpected hits, nobody is built to absorb it" },
+      fix:  { ja: "計画に、意図的に何も入れない予備日を先に置いておく", en: "Put deliberately empty days into the plan up front" }
+    },
+    L: {
+      risk: { ja: "常に締切間際で燃える。前半の時間が丸ごと死んでいる", en: "Everything burns at the deadline, and the first half of every schedule is wasted" },
+      fix:  { ja: "本番の1週間前に、中間の締切を本物として置く", en: "Set a real interim deadline a week before the real one" }
+    },
+    C: {
+      risk: { ja: "決定権が競合して会議が長引き、方針が二転三転する", en: "Competing decision-makers stretch meetings out and the direction keeps flipping" },
+      fix:  { ja: "案件ごとに「最後に決める人」を、始める前に1人決める", en: "Name one final decision-maker per project, before the work starts" }
+    },
+    B: {
+      risk: { ja: "誰も決めないまま止まる。責任の所在が曖昧になる", en: "Nothing gets decided, everything stalls, and nobody owns it" },
+      fix:  { ja: "持ち回りでいいので、決める人を必ず1人立てる", en: "Always have one decider, even if the role just rotates" }
     }
   },
 

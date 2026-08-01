@@ -92,6 +92,7 @@
     bar: document.getElementById("progress-bar"),
     qText: document.getElementById("q-text"),
     choices: document.getElementById("q-choices"),
+    char: document.getElementById("result-char"),
     code: document.getElementById("result-code"),
     name: document.getElementById("result-name"),
     catch: document.getElementById("result-catch"),
@@ -214,6 +215,7 @@
     var code = buildCode(scores);
     var type = DATA.types[code];
 
+    el.char.innerHTML = window.buildCharacter ? window.buildCharacter(code, { size: 132 }) : "";
     el.code.textContent = code;
     el.name.textContent = t(type.name);
     el.catch.textContent = t(type.catch);
