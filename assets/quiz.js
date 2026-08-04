@@ -111,6 +111,13 @@
     labelWatch: document.getElementById("label-watch"),
     labelFits: document.getElementById("label-fits"),
     labelPitch: document.getElementById("label-pitch"),
+    envFit: document.getElementById("env-fit"),
+    envAsk: document.getElementById("env-ask"),
+    envFlag: document.getElementById("env-flag"),
+    labelEnv: document.getElementById("label-env"),
+    labelEnvFit: document.getElementById("label-envfit"),
+    labelEnvAsk: document.getElementById("label-envask"),
+    labelEnvFlag: document.getElementById("label-envflag"),
     linkTeam: document.getElementById("link-team"),
     brand: document.getElementById("brand"),
     tagline: document.getElementById("tagline"),
@@ -144,6 +151,10 @@
     el.labelWatch.textContent = t(DATA.ui.watchOut);
     el.labelFits.textContent = t(DATA.ui.fits);
     el.labelPitch.textContent = t(DATA.ui.pitch);
+    el.labelEnv.textContent = t(DATA.ui.envTitle);
+    el.labelEnvFit.textContent = t(DATA.ui.envFit);
+    el.labelEnvAsk.textContent = t(DATA.ui.envAsk);
+    el.labelEnvFlag.textContent = t(DATA.ui.envFlag);
     el.labelGood.textContent = t(DATA.match.good.label);
     el.labelBad.textContent = t(DATA.match.bad.label);
     el.linkTeam.textContent = t(DATA.ui.teamLink);
@@ -227,6 +238,7 @@
     el.fits.textContent = t(type.fits);
     el.pitch.textContent = t(type.pitch);
 
+    renderEnv(code);
     renderAxes(scores);
     renderMatch(code);
     show(el.result);
@@ -240,6 +252,14 @@
       "&url=" + encodeURIComponent(url);
 
     el.btnCopy.dataset.url = url;
+  }
+
+  /* 自分の4文字から、企業を見極めるための材料を組み立てる */
+  function renderEnv(code) {
+    var picked = code.split("").map(function (ch) { return DATA.env[ch]; });
+    fillList(el.envFit,  picked.map(function (e) { return t(e.fit); }));
+    fillList(el.envAsk,  picked.map(function (e) { return t(e.ask); }));
+    fillList(el.envFlag, picked.map(function (e) { return t(e.flag); }));
   }
 
   /* 箇条書きを入れ替える */

@@ -3,19 +3,19 @@
    ========================================================= */
 
 :root {
-  --bg: #0d0d11;
-  --panel: #16161c;
-  --panel-hi: #1e1e26;
-  --line: #2a2a34;
-  --text: #f2f2f5;
-  --muted: #8f8f9e;
+  --bg: #f5f7fa;            /* 紙のような明るい背景 */
+  --panel: #ffffff;
+  --panel-hi: #eef2f7;
+  --line: #dbe2ec;
+  --text: #16233c;          /* 紺 */
+  --muted: #5d6b85;
 
-  --accent: #c8f24e;       /* 差し色（ライム） */
-  --accent-ink: #16200a;   /* 差し色の上に乗せる文字色 */
+  --accent: #1e50a2;        /* 差し色（紺青） */
+  --accent-ink: #ffffff;    /* 差し色の上に乗せる文字色 */
 
-  --low: #7ee081;          /* 依存度：低 */
-  --mid: #ffc247;          /* 依存度：中 */
-  --high: #ff6b81;         /* 依存度：高 */
+  --low: #1f7a4d;           /* 良い / 均衡 */
+  --mid: #a86a06;           /* 注意 */
+  --high: #b23c30;          /* 警告 */
 
   --radius: 14px;
   --max: 34rem;
@@ -50,7 +50,7 @@ body::before {
   inset: 0;
   pointer-events: none;
   z-index: 0;
-  opacity: 0.35;
+  opacity: 0.05;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='0.22'/%3E%3C/svg%3E");
 }
 
@@ -233,6 +233,7 @@ body::before {
 }
 
 .choice {
+  box-shadow: 0 1px 2px rgba(22, 35, 60, 0.04);
   display: flex;
   align-items: center;
   gap: 0.9rem;
@@ -329,7 +330,7 @@ body::before {
 
 .axis-side {
   font-weight: 700;
-  color: #5c5c69;
+  color: #9aa6bb;
   transition: color 0.3s ease;
 }
 
@@ -543,6 +544,7 @@ body::before {
 
 .panel {
   padding: 1.1rem 1.2rem;
+  box-shadow: 0 1px 2px rgba(22, 35, 60, 0.05);
   margin-bottom: 0.7rem;
   background: var(--panel);
   border: 1px solid var(--line);
@@ -685,7 +687,7 @@ body::before {
 /* 左右の比率をそのまま見せる帯 */
 .axis-track.split { background: var(--accent); }
 .axis-track.split .axis-fill {
-  background: #5c5c69;
+  background: #b6c0d1;
   border-radius: 999px 0 0 999px;
 }
 
@@ -759,3 +761,28 @@ body::before {
   margin-bottom: 0.4rem;
   color: var(--low);
 }
+
+/* =========================================================
+   企業の見極め方 / How to size up a company
+   ========================================================= */
+
+.panel.is-env {
+  margin-top: 1.2rem;
+  border-color: var(--accent);
+}
+
+.panel-sub {
+  margin: 1.1rem 0 0.5rem;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.panel-sub:first-of-type { margin-top: 0.2rem; }
+
+/* 聞くべき質問は、そのまま読み上げられるよう鉤括弧で囲む */
+.bullets.is-ask li { font-weight: 700; }
+.bullets.is-ask li::before { background: var(--accent); }
+
+.panel.is-env .panel-note { margin-top: 1.1rem; }

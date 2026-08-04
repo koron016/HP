@@ -15,9 +15,9 @@
 (function () {
   "use strict";
 
-  var LIME = "#c8f24e";
-  var INK = "#16200a";
-  var SHADOW = "rgba(0,0,0,0.35)";
+  var LIME = "#1e50a2";   /* 体の色 */
+  var INK = "#ffffff";    /* 目の色 */
+  var SHADOW = "rgba(22,35,60,0.13)";
 
   function buildCharacter(code, opts) {
     opts = opts || {};

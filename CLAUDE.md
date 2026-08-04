@@ -71,6 +71,15 @@ cannot do this — it reads individuals, so it has nothing to say about what a *
 Keep any new team-level output in that shape: a failure mode plus a counter-move, never a label
 alone.
 
+### The result has to be usable in a job search, not just readable
+
+A type label is not a reason to come back. `env` in `quiz-data.js` carries, per axis side, the
+conditions that suit that side, a question to ask a company, and a warning sign — so a student
+leaves with four of each, derived from their own four letters. The questions are written to work
+verbatim as the candidate's own questions at the end of an interview, which is the moment students
+reliably freeze. Deliberately no real company names: a personal site claiming "this employer suits
+you" is not credible, the data would rot, and the judgment belongs to the student.
+
 ### Character art is derived, not drawn
 
 `assets/character.js` builds each type's figure from its code — head shape from axis 0, eyes from

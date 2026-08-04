@@ -84,6 +84,14 @@ window.QUIZ_DATA = {
     teamBalanced:{ ja: "拮抗", en: "Balanced" },
     teamSkewed:  { ja: "偏り", en: "Skewed" },
     teamTakeTest:{ ja: "自分のタイプを調べる", en: "Find your own type" },
+    envTitle:    { ja: "企業の見極め方", en: "How to size up a company" },
+    envFit:      { ja: "合う環境の条件", en: "Conditions that suit you" },
+    envAsk:      { ja: "説明会・面接で聞くこと", en: "Ask them this" },
+    envFlag:     { ja: "合わないサイン", en: "Warning signs" },
+    envNote: {
+      ja: "そのまま逆質問に使えます。答えを聞いて、自分に合うかを自分で判断してください。合う・合わないは会社の良し悪しではありません。",
+      en: "These double as your questions for them. Judge the fit yourself from the answers — a bad fit is not a bad company."
+    },
     teamRisk:    { ja: "この偏りで起きること", en: "What this costs you" },
     teamFix:     { ja: "打ち手", en: "What to do" },
     teamRiskNone:{ ja: "どの軸にも大きな偏りがありません。今のところ構造的な弱点は出ていません。", en: "No axis is badly skewed. No structural weak point right now." },
@@ -172,6 +180,52 @@ window.QUIZ_DATA = {
     B: {
       risk: { ja: "誰も決めないまま止まる。責任の所在が曖昧になる", en: "Nothing gets decided, everything stalls, and nobody owns it" },
       fix:  { ja: "持ち回りでいいので、決める人を必ず1人立てる", en: "Always have one decider, even if the role just rotates" }
+    }
+  },
+
+  /* --- 企業の見極め方 ---
+     自分がどちら側かによって、確認すべき条件・聞くべき質問・警戒すべきサインが変わります。
+     実在の企業名は出しません。判断は本人がするものだからです。 --- */
+  env: {
+    I: {
+      fit:  { ja: "決裁の階層が浅く、速く動けることが評価される", en: "Few approval layers, and speed is what gets rewarded" },
+      ask:  { ja: "何かを決めるとき、だいたいどれくらいで結論が出ますか？", en: "How long does it usually take for a decision to land?" },
+      flag: { ja: "稟議の話が長い。「前例がないと難しい」と言われた", en: "Long talk about sign-off. “We'd need a precedent for that.”" }
+    },
+    D: {
+      fit:  { ja: "数字と根拠で判断する習慣が、実際に回っている", en: "Decisions actually run on numbers, not vibes" },
+      ask:  { ja: "施策がうまくいったかどうかは、何で判断していますか？", en: "How do you tell whether something worked?" },
+      flag: { ja: "「まずやってみよう」しか出てこない。数字が答えられない", en: "“We just try things.” Nobody can quote a number." }
+    },
+    S: {
+      fit:  { ja: "一人で任される範囲がはっきりしていて、裁量がある", en: "Clear individual ownership, with real latitude inside it" },
+      ask:  { ja: "一人が担当する範囲は、どこからどこまでですか？", en: "Where does one person's ownership start and stop?" },
+      flag: { ja: "常に複数人で動く。会議の多さを誇っている", en: "Everything is done in groups. They boast about how many meetings they have." }
+    },
+    T: {
+      fit:  { ja: "チームで進めるのが前提で、相談しやすい距離にいる", en: "Team-first by default, with people close enough to ask" },
+      ask:  { ja: "ひとつの仕事は、普段どれくらいの人数で進めますか？", en: "How many people usually work on one thing?" },
+      flag: { ja: "基本は個人プレー。誰が何をしているか見えない", en: "Everyone works solo. Nobody can see what anyone else is doing." }
+    },
+    E: {
+      fit:  { ja: "計画が守られる前提があり、急な差し込みが少ない", en: "Plans are expected to hold, and interruptions are rare" },
+      ask:  { ja: "予定が急に変わることは、どれくらいの頻度でありますか？", en: "How often do plans get thrown out mid-week?" },
+      flag: { ja: "繁忙期の話をはぐらかされた。「臨機応変」を連呼する", en: "They dodge the question about crunch, and keep saying “flexible”." }
+    },
+    L: {
+      fit:  { ja: "進め方が本人に任され、成果で見てもらえる", en: "How you get there is up to you; you're judged on the result" },
+      ask:  { ja: "進め方は個人に任されますか、決まった手順がありますか？", en: "Do people choose their own approach, or follow a set process?" },
+      flag: { ja: "日次で進捗を報告させる。手順が細かく決まっている", en: "Daily progress reporting. The process is prescribed in detail." }
+    },
+    C: {
+      fit:  { ja: "若手にも早い段階で決定権が渡る", en: "Junior people get real decisions early" },
+      ask:  { ja: "入社して何年目から、自分で決められるようになりますか？", en: "How soon do new people get to make their own calls?" },
+      flag: { ja: "年次の話が多い。決裁が上に集中している", en: "A lot of talk about seniority. All decisions sit at the top." }
+    },
+    B: {
+      fit:  { ja: "役割がはっきりしていて、専門性を積み上げられる", en: "Defined roles, so expertise actually compounds" },
+      ask:  { ja: "配属後は、どんな役割から始まりますか？", en: "What role would I actually start in?" },
+      flag: { ja: "「なんでもやってもらう」と言われた。役割の説明が曖昧", en: "“You'll do a bit of everything.” The role can't be described." }
     }
   },
 
