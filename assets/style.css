@@ -802,3 +802,121 @@ body::before {
   line-height: 1.85;
 }
 .bullets.is-say li::before { background: var(--low); }
+
+/* =========================================================
+   深掘りの3段階 / The three-level dig
+   ========================================================= */
+
+.panel.is-chain { margin-top: 1.2rem; border-color: var(--accent); }
+
+.chain {
+  padding: 0.9rem 0 1rem;
+  border-top: 1px solid var(--line);
+}
+.chain:first-of-type { border-top: none; padding-top: 0.2rem; }
+
+.chain-head {
+  margin: 0 0 0.6rem;
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+}
+
+/* 1→2→3 と掘られていくのが見えるよう、段ごとに下げる */
+.chain-steps {
+  margin: 0 0 0.9rem;
+  padding: 0;
+  list-style: none;
+  counter-reset: dig;
+}
+
+.chain-steps li {
+  counter-increment: dig;
+  position: relative;
+  padding-left: 2rem;
+  margin-bottom: 0.4rem;
+  font-size: 0.9rem;
+  line-height: 1.7;
+  font-weight: 700;
+}
+
+.chain-steps li:nth-child(2) { margin-left: 0.7rem; }
+.chain-steps li:nth-child(3) { margin-left: 1.4rem; }
+
+.chain-steps li::before {
+  content: counter(dig);
+  position: absolute;
+  left: 0;
+  top: 0.25em;
+  width: 1.4rem;
+  height: 1.4rem;
+  display: grid;
+  place-items: center;
+  font-size: 0.7rem;
+  color: var(--accent-ink);
+  background: var(--accent);
+  border-radius: 50%;
+}
+
+/* 3段目がいちばん危ないので、そこだけ色を変える */
+.chain-steps li:nth-child(3)::before { background: var(--high); }
+
+.chain-hold-label {
+  margin: 0 0 0.3rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--low);
+}
+
+.chain-hold {
+  margin: 0;
+  font-size: 0.86rem;
+  line-height: 1.8;
+  color: var(--muted);
+}
+
+/* =========================================================
+   逆質問と、答えの読み方 / Question and how to read the answer
+   ========================================================= */
+
+.ask {
+  padding: 0.9rem 0;
+  border-top: 1px solid var(--line);
+}
+.ask:first-of-type { border-top: none; padding-top: 0.2rem; }
+
+.ask-q {
+  margin: 0 0 0.6rem;
+  font-size: 0.93rem;
+  font-weight: 700;
+  line-height: 1.7;
+}
+
+.ask-read-label {
+  margin: 0 0 0.35rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+}
+
+.ask-read {
+  display: flex;
+  gap: 0.5rem;
+  margin: 0 0 0.3rem;
+  font-size: 0.83rem;
+  line-height: 1.65;
+  color: var(--muted);
+}
+
+.ask-mark {
+  flex-shrink: 0;
+  font-weight: 700;
+  width: 1rem;
+}
+
+.ask-read.is-good  .ask-mark { color: var(--low); }
+.ask-read.is-vague .ask-mark { color: var(--mid); }
+.ask-read.is-bad   .ask-mark { color: var(--high); }

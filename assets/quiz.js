@@ -111,6 +111,8 @@
     labelWatch: document.getElementById("label-watch"),
     labelFits: document.getElementById("label-fits"),
     labelPitch: document.getElementById("label-pitch"),
+    chainList: document.getElementById("chain-list"),
+    labelChain: document.getElementById("label-chain"),
     prepWeak: document.getElementById("prep-weak"),
     prepDig: document.getElementById("prep-dig"),
     prepWrite: document.getElementById("prep-write"),
@@ -158,6 +160,7 @@
     el.labelWatch.textContent = t(DATA.ui.watchOut);
     el.labelFits.textContent = t(DATA.ui.fits);
     el.labelPitch.textContent = t(DATA.ui.pitch);
+    el.labelChain.textContent = t(DATA.ui.chainTitle);
     el.labelPrep.textContent = t(DATA.ui.prepTitle);
     el.labelPrepWeak.textContent = t(DATA.ui.prepWeak);
     el.labelPrepDig.textContent = t(DATA.ui.prepDig);
@@ -250,6 +253,7 @@
     el.pitch.textContent = t(type.pitch);
 
     renderPrep(code);
+    renderChain(code);
     renderEnv(code);
     renderAxes(scores);
     renderMatch(code);
@@ -274,12 +278,78 @@
     fillList(el.prepWrite, picked.map(function (p) { return t(p.write); }));
   }
 
-  /* 自分の4文字から、企業を見極めるための材料を組み立てる */
+  /* 深掘りの3段階。1段目より2・3段目で崩れるので、そこを並べて見せる */
+  function renderChain(code) {
+    el.chainList.innerHTML = "";
+
+    code.split("").forEach(function (ch, i) {
+      var c = DATA.chain[ch];
+      var axis = DATA.axes[i];
+      var side = ch === axis.left.key ? axis.left : axis.right;
+
+      var box = document.createElement("div");
+      box.className = "chain";
+
+      var head = document.createElement("p");
+      head.className = "chain-head";
+      head.textContent = t(axis.title) + " — " + t(side.label);
+      box.appendChild(head);
+
+      var ol = document.createElement("ol");
+      ol.className = "chain-steps";
+      t(c.steps).forEach(function (q) {
+        var li = document.createElement("li");
+        li.textContent = q;
+        ol.appendChild(li);
+      });
+      box.appendChild(ol);
+
+      var holdLabel = document.createElement("p");
+      holdLabel.className = "chain-hold-label";
+      holdLabel.textContent = t(DATA.ui.chainHold);
+      box.appendChild(holdLabel);
+
+      var hold = document.createElement("p");
+      hold.className = "chain-hold";
+      hold.textContent = t(c.hold);
+      box.appendChild(hold);
+
+      el.chainList.appendChild(box);
+    });
+  }
+
+  /* 自分の4文字から、企業を見極めるための材料を組み立てる。
+     質問だけでなく、返ってきた答えの読み方まで出す */
   function renderEnv(code) {
     var picked = code.split("").map(function (ch) { return DATA.env[ch]; });
     fillList(el.envFit,  picked.map(function (e) { return t(e.fit); }));
-    fillList(el.envAsk,  picked.map(function (e) { return t(e.ask); }));
     fillList(el.envFlag, picked.map(function (e) { return t(e.flag); }));
+
+    el.envAsk.innerHTML = "";
+    picked.forEach(function (e) {
+      var box = document.createElement("div");
+      box.className = "ask";
+
+      var q = document.createElement("p");
+      q.className = "ask-q";
+      q.textContent = "「" + t(e.ask) + "」";
+      box.appendChild(q);
+
+      var label = document.createElement("p");
+      label.className = "ask-read-label";
+      label.textContent = t(DATA.ui.envRead);
+      box.appendChild(label);
+
+      [["good", "○"], ["vague", "△"], ["bad", "×"]].forEach(function (pair) {
+        var row = document.createElement("p");
+        row.className = "ask-read is-" + pair[0];
+        row.innerHTML = '<span class="ask-mark">' + pair[1] + "</span>";
+        row.appendChild(document.createTextNode(t(e.read[pair[0]])));
+        box.appendChild(row);
+      });
+
+      el.envAsk.appendChild(box);
+    });
   }
 
   /* 箇条書きを入れ替える */

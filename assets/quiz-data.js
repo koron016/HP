@@ -88,6 +88,13 @@ window.QUIZ_DATA = {
     prepDig:     { ja: "あなたが突かれる質問", en: "What they will press you on" },
     prepWeak:    { ja: "「短所は？」への答え方", en: "Answering “what's your weakness?”" },
     prepWrite:   { ja: "ガクチカで厚く書くところ", en: "What to make the centre of your story" },
+    chainTitle:  { ja: "ここまで掘られます", en: "How far they will dig" },
+    chainHold:   { ja: "崩れない答え方", en: "How to hold your ground" },
+    chainNote: {
+      ja: "面接官は同じ話を3回掘ります。学生が崩れるのは2段目と3段目です。ここを先に用意しておくと、落ちません。",
+      en: "Interviewers dig three levels into the same story. Candidates come apart at the second and third. Prepare these and you won't."
+    },
+    envRead:     { ja: "返ってきた答えの読み方", en: "How to read their answer" },
     prepNote: {
       ja: "短所は、自覚と対策をセットにすると通ります。丸暗記せず、自分の経験に置き換えてから使ってください。",
       en: "A weakness lands when you pair it with what you now do about it. Rewrite these in your own words before using them."
@@ -245,46 +252,172 @@ window.QUIZ_DATA = {
     }
   },
 
+  /* --- 深掘りの3段階 ---
+     面接官は同じ話を3回掘ります。1段目は誰でも用意していますが、
+     2段目・3段目で崩れる。そこを先回りして渡します。 --- */
+  chain: {
+    I: {
+      steps: {
+        ja: ["その判断の根拠は何でしたか？", "他の選択肢は検討しましたか？", "なぜ、その選択肢を捨てたのですか？"],
+        en: ["What was that decision based on?", "Did you consider the alternatives?", "Why did you rule them out?"]
+      },
+      hold: {
+        ja: "捨てた理由を1つ言えれば通ります。「考えませんでした」は避け、「〜だと判断して外しました」と、選ばなかったことも判断として語ってください。",
+        en: "One reason for ruling something out is enough. Never say you didn't consider it — say you assessed it and set it aside. Not choosing is still a decision."
+      }
+    },
+    D: {
+      steps: {
+        ja: ["情報が足りないときは、どう決めますか？", "決めきれなかったことはありますか？", "そのとき、何を失いましたか？"],
+        en: ["How do you decide without enough information?", "Has hesitation ever stopped you deciding?", "What did that cost you?"]
+      },
+      hold: {
+        ja: "「特にありません」が一番危険です。失ったものを具体的に言えると、誠実さと学習能力が同時に伝わります。",
+        en: "“Nothing really” is the worst answer here. Naming what it cost you shows honesty and that you learned, in one move."
+      }
+    },
+    S: {
+      steps: {
+        ja: ["チームで動いた経験を教えてください", "その中で、あなたの役割は何でしたか？", "なぜ、あなたがその役割になったのですか？"],
+        en: ["Tell me about working in a team", "What was your role in it?", "Why did that role end up being yours?"]
+      },
+      hold: {
+        ja: "3段目が本番です。「与えられました」ではなく「自分で取りに行きました」の形にしてください。理由は能力ではなく、状況で説明すると嫌味がありません。",
+        en: "The third question is the real one. Say you took the role, not that you were handed it — and explain it by the situation, not by your own ability."
+      }
+    },
+    T: {
+      steps: {
+        ja: ["自分ひとりで成し遂げたことはありますか？", "周りに頼らず、どこまでやりましたか？", "なぜ、そこは人に頼らなかったのですか？"],
+        en: ["What have you achieved alone?", "How far did you get without help?", "Why didn't you bring anyone in there?"]
+      },
+      hold: {
+        ja: "「頼れなかった」と言うと弱く聞こえます。「ここは自分がやるべきだと判断した」に変えるだけで、主体性の話になります。",
+        en: "“There was nobody to ask” sounds weak. “I judged that this part was mine to carry” turns the same fact into initiative."
+      }
+    },
+    E: {
+      steps: {
+        ja: ["予定通りにいかなかった経験はありますか？", "そのとき、最初に何をしましたか？", "なぜ、それを最初にやったのですか？"],
+        en: ["When has a plan not held?", "What did you do first?", "Why that first?"]
+      },
+      hold: {
+        ja: "3段目で問われているのは優先順位の付け方です。「何を捨てたか」まで言えると、判断力の証明になります。",
+        en: "The third question is about how you prioritise. Say what you dropped, not just what you did — that is where the judgment shows."
+      }
+    },
+    L: {
+      steps: {
+        ja: ["計画的に進めるのは苦手ですか？", "なぜ、早く始められないのだと思いますか？", "それで間に合わなかったことはありますか？"],
+        en: ["Are you bad at working to a plan?", "Why do you think you start late?", "Has it ever made you miss a deadline?"]
+      },
+      hold: {
+        ja: "3段目で「ありません」は嘘に聞こえます。一度あったと認め、そのあと自分で作った仕組みを1つ挙げてください。認めた方が信用されます。",
+        en: "Saying “never” at the third step sounds false. Admit it happened once, then name the mechanism you built afterwards. Admitting it is what buys trust."
+      }
+    },
+    C: {
+      steps: {
+        ja: ["周囲と意見が割れたことはありますか？", "そのとき、相手の意見はどう扱いましたか？", "結果的に、あなたの判断は正しかったですか？"],
+        en: ["Have you clashed with people?", "What did you do with their view?", "In the end, were you right?"]
+      },
+      hold: {
+        ja: "3段目で「正しかったです」と言い切ると、独断的に映ります。取り入れた部分を1つ挙げてから結果を話すと、同じ話が協調性の証明に変わります。",
+        en: "Claiming you were right reads as domineering. Name one thing you took from the other side first, then give the outcome — the same story now proves you listen."
+      }
+    },
+    B: {
+      steps: {
+        ja: ["自分から動いた経験を教えてください", "それは、誰かに言われて始めたことですか？", "言われる前に動けなかったのは、なぜですか？"],
+        en: ["Tell me about taking initiative", "Did someone ask you to start?", "Why didn't you move before being asked?"]
+      },
+      hold: {
+        ja: "「様子を見ていました」は受け身に聞こえます。「動く条件が揃うのを待っていた」「先に周りの状況を確かめていた」と、待つことを判断として語ってください。",
+        en: "“I was watching how it went” sounds passive. Say you were waiting for the conditions, or checking the ground first — frame the waiting as a decision."
+      }
+    }
+  },
+
   /* --- 企業の見極め方 ---
      自分がどちら側かによって、確認すべき条件・聞くべき質問・警戒すべきサインが変わります。
      実在の企業名は出しません。判断は本人がするものだからです。 --- */
   env: {
     I: {
+      read: {
+        good:  { ja: "「その場で決まることが多いです」", en: "“Usually on the spot.”" },
+        vague: { ja: "「案件によりますね」→ はぐらかし。「直近の例だと？」と重ねる", en: "“It depends on the case.” — a dodge. Follow with “what about the most recent one?”" },
+        bad:   { ja: "「稟議を通すので2週間ほど」→ あなたの速さは活きない", en: "“About two weeks, it goes through sign-off.” — your speed will not count here" }
+      },
       fit:  { ja: "決裁の階層が浅く、速く動けることが評価される", en: "Few approval layers, and speed is what gets rewarded" },
       ask:  { ja: "何かを決めるとき、だいたいどれくらいで結論が出ますか？", en: "How long does it usually take for a decision to land?" },
       flag: { ja: "稟議の話が長い。「前例がないと難しい」と言われた", en: "Long talk about sign-off. “We'd need a precedent for that.”" }
     },
     D: {
+      read: {
+        good:  { ja: "「毎週この指標を見ています」と具体的な数字が出る", en: "They quote a specific metric they watch weekly" },
+        vague: { ja: "「感覚ですね」と笑われた → 根拠で語る文化はない", en: "They laugh and say “gut feel” — evidence is not the currency here" },
+        bad:   { ja: "数字を1つも言えない → あなたの武器が評価されない", en: "They cannot name a single number — your strength will go unread" }
+      },
       fit:  { ja: "数字と根拠で判断する習慣が、実際に回っている", en: "Decisions actually run on numbers, not vibes" },
       ask:  { ja: "施策がうまくいったかどうかは、何で判断していますか？", en: "How do you tell whether something worked?" },
       flag: { ja: "「まずやってみよう」しか出てこない。数字が答えられない", en: "“We just try things.” Nobody can quote a number." }
     },
     S: {
+      read: {
+        good:  { ja: "「この範囲は一人で持ちます」と線が引ける", en: "They can draw the line: “this scope is one person\u2019s”" },
+        vague: { ja: "「みんなで見ています」→ 責任の所在が曖昧な可能性", en: "“We all look after it together” — ownership may be unclear" },
+        bad:   { ja: "「その都度です」→ 裁量が読めない。もう一段聞く", en: "“It varies” — latitude is unreadable; press once more" }
+      },
       fit:  { ja: "一人で任される範囲がはっきりしていて、裁量がある", en: "Clear individual ownership, with real latitude inside it" },
       ask:  { ja: "一人が担当する範囲は、どこからどこまでですか？", en: "Where does one person's ownership start and stop?" },
       flag: { ja: "常に複数人で動く。会議の多さを誇っている", en: "Everything is done in groups. They boast about how many meetings they have." }
     },
     T: {
+      read: {
+        good:  { ja: "「常に2〜3人で見ています」と具体的な人数が出る", en: "They give a real number: “two or three of us on anything”" },
+        vague: { ja: "「基本は個人ですが相談はできます」→ 実態は一人の可能性", en: "“Mostly solo, but you can ask” — probably solo in practice" },
+        bad:   { ja: "「席も離れていて各自で進めます」→ 巻き込む余地が少ない", en: "“Everyone sits apart and works their own way” — little room to pull people in" }
+      },
       fit:  { ja: "チームで進めるのが前提で、相談しやすい距離にいる", en: "Team-first by default, with people close enough to ask" },
       ask:  { ja: "ひとつの仕事は、普段どれくらいの人数で進めますか？", en: "How many people usually work on one thing?" },
       flag: { ja: "基本は個人プレー。誰が何をしているか見えない", en: "Everyone works solo. Nobody can see what anyone else is doing." }
     },
     E: {
+      read: {
+        good:  { ja: "「四半期の計画がほぼそのまま動きます」", en: "“The quarterly plan mostly holds.”" },
+        vague: { ja: "「臨機応変が売りです」→ 前倒しが無駄になる可能性", en: "“We pride ourselves on being flexible” — your early finishes may be wasted" },
+        bad:   { ja: "繁忙期の話をはぐらかされた → 一番聞きたいところを避けている", en: "They dodge the question about crunch — that is the answer" }
+      },
       fit:  { ja: "計画が守られる前提があり、急な差し込みが少ない", en: "Plans are expected to hold, and interruptions are rare" },
       ask:  { ja: "予定が急に変わることは、どれくらいの頻度でありますか？", en: "How often do plans get thrown out mid-week?" },
       flag: { ja: "繁忙期の話をはぐらかされた。「臨機応変」を連呼する", en: "They dodge the question about crunch, and keep saying “flexible”." }
     },
     L: {
+      read: {
+        good:  { ja: "「やり方は任せます。見るのは結果です」", en: "“How you do it is yours. We look at the result.”" },
+        vague: { ja: "「一応、日報はあります」→ 程度を必ず確認する", en: "“There is a daily report, technically” — always check how heavy" },
+        bad:   { ja: "「手順書どおりに進めてもらいます」→ あなたの粘りが出せない", en: "“You follow the documented process” — no room for your late surge" }
+      },
       fit:  { ja: "進め方が本人に任され、成果で見てもらえる", en: "How you get there is up to you; you're judged on the result" },
       ask:  { ja: "進め方は個人に任されますか、決まった手順がありますか？", en: "Do people choose their own approach, or follow a set process?" },
       flag: { ja: "日次で進捗を報告させる。手順が細かく決まっている", en: "Daily progress reporting. The process is prescribed in detail." }
     },
     C: {
+      read: {
+        good:  { ja: "「1年目から自分の判断で動いてもらいます」", en: "“From year one, the calls are yours.”" },
+        vague: { ja: "「人によります」→ 実例を1つ聞く。答えられなければ実績がない", en: "“It depends on the person” — ask for one example; no example means it has not happened" },
+        bad:   { ja: "「まずは3年、しっかり学んでもらいます」→ 決める機会は当分ない", en: "“The first three years are for learning” — decisions are a long way off" }
+      },
       fit:  { ja: "若手にも早い段階で決定権が渡る", en: "Junior people get real decisions early" },
       ask:  { ja: "入社して何年目から、自分で決められるようになりますか？", en: "How soon do new people get to make their own calls?" },
       flag: { ja: "年次の話が多い。決裁が上に集中している", en: "A lot of talk about seniority. All decisions sit at the top." }
     },
     B: {
+      read: {
+        good:  { ja: "役割の名前と担当範囲がすぐ出てくる", en: "They name the role and its scope without hesitating" },
+        vague: { ja: "「いろいろ経験してもらいます」→ 何屋になるのか見えない", en: "“You\u2019ll get to try lots of things” — unclear what you would become" },
+        bad:   { ja: "「なんでもやってもらいます」→ 専門性は積み上がらない", en: "“A bit of everything” — expertise will not compound" }
+      },
       fit:  { ja: "役割がはっきりしていて、専門性を積み上げられる", en: "Defined roles, so expertise actually compounds" },
       ask:  { ja: "配属後は、どんな役割から始まりますか？", en: "What role would I actually start in?" },
       flag: { ja: "「なんでもやってもらう」と言われた。役割の説明が曖昧", en: "“You'll do a bit of everything.” The role can't be described." }

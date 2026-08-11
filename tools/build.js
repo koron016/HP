@@ -238,12 +238,37 @@ ${DATA.langs.map((l) =>
       <p class="panel-note">${escapeHtml(t(DATA.ui.prepNote, lang))}</p>
     </div>
 
+    <div class="panel is-chain">
+      <p class="panel-label">${escapeHtml(t(DATA.ui.chainTitle, lang))}</p>
+${code.split("").map((ch, i) => {
+  const axis = DATA.axes[i];
+  const side = ch === axis.left.key ? axis.left : axis.right;
+  const c = DATA.chain[ch];
+  return `      <div class="chain">
+        <p class="chain-head">${escapeHtml(t(axis.title, lang))} — ${escapeHtml(t(side.label, lang))}</p>
+        <ol class="chain-steps">${t(c.steps, lang).map((q) => `<li>${escapeHtml(q)}</li>`).join("")}</ol>
+        <p class="chain-hold-label">${escapeHtml(t(DATA.ui.chainHold, lang))}</p>
+        <p class="chain-hold">${escapeHtml(t(c.hold, lang))}</p>
+      </div>`;
+}).join("\n")}
+      <p class="panel-note">${escapeHtml(t(DATA.ui.chainNote, lang))}</p>
+    </div>
+
     <div class="panel is-env">
       <p class="panel-label">${escapeHtml(t(DATA.ui.envTitle, lang))}</p>
       <p class="panel-sub">${escapeHtml(t(DATA.ui.envFit, lang))}</p>
       <ul class="bullets">${bullets(code.split("").map((ch) => t(DATA.env[ch].fit, lang)))}</ul>
       <p class="panel-sub">${escapeHtml(t(DATA.ui.envAsk, lang))}</p>
-      <ul class="bullets is-ask">${bullets(code.split("").map((ch) => t(DATA.env[ch].ask, lang)))}</ul>
+${code.split("").map((ch) => {
+  const e = DATA.env[ch];
+  return `      <div class="ask">
+        <p class="ask-q">「${escapeHtml(t(e.ask, lang))}」</p>
+        <p class="ask-read-label">${escapeHtml(t(DATA.ui.envRead, lang))}</p>
+        <p class="ask-read is-good"><span class="ask-mark">○</span>${escapeHtml(t(e.read.good, lang))}</p>
+        <p class="ask-read is-vague"><span class="ask-mark">△</span>${escapeHtml(t(e.read.vague, lang))}</p>
+        <p class="ask-read is-bad"><span class="ask-mark">×</span>${escapeHtml(t(e.read.bad, lang))}</p>
+      </div>`;
+}).join("\n")}
       <p class="panel-sub">${escapeHtml(t(DATA.ui.envFlag, lang))}</p>
       <ul class="bullets is-warn">${bullets(code.split("").map((ch) => t(DATA.env[ch].flag, lang)))}</ul>
       <p class="panel-note">${escapeHtml(t(DATA.ui.envNote, lang))}</p>

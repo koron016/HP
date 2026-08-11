@@ -80,6 +80,23 @@ verbatim as the candidate's own questions at the end of an interview, which is t
 reliably freeze. Deliberately no real company names: a personal site claiming "this employer suits
 you" is not credible, the data would rot, and the judgment belongs to the student.
 
+### The two parts that are not on other job-search sites
+
+Question lists are commodity — every 就活 site has them. Two things sit a layer deeper and are the
+reason to use this one, so do not flatten them back into lists.
+
+`chain` gives the same story dug three times. Candidates prepare an answer to the first question and
+come apart at the second and third, which is where interviews are actually lost. Each entry ends
+with `hold`: the specific reframe that survives the third question — take the role rather than being
+given it, admit the missed deadline and name what you built afterwards, credit one thing you took
+from the person you overruled.
+
+`env[*].read` grades the answer the company gives back. Anyone can hand a student a question to ask;
+telling them that "it depends on the case" is a dodge and that "the first three years are for
+learning" means no decisions for three years is what a professional would add. Keep the three-way
+good / vague / bad shape — the vague branch is the valuable one, because it tells the student to
+press once more instead of accepting a non-answer.
+
 ### Character art is derived, not drawn
 
 `assets/character.js` builds each type's figure from its code — head shape from axis 0, eyes from
