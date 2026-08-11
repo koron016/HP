@@ -786,3 +786,19 @@ body::before {
 .bullets.is-ask li::before { background: var(--accent); }
 
 .panel.is-env .panel-note { margin-top: 1.1rem; }
+
+/* =========================================================
+   面接の備え / Interview prep
+   ========================================================= */
+
+.panel.is-prep {
+  margin-top: 1.2rem;
+  border-color: var(--accent);
+}
+
+/* そのまま口に出せる文。読み上げやすいよう行間を広げる */
+.bullets.is-say li {
+  font-weight: 700;
+  line-height: 1.85;
+}
+.bullets.is-say li::before { background: var(--low); }

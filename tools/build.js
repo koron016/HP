@@ -227,6 +227,17 @@ ${DATA.langs.map((l) =>
       <p class="panel-note">${escapeHtml(t(DATA.ui.pitchNote, lang))}</p>
     </div>
 
+    <div class="panel is-prep">
+      <p class="panel-label">${escapeHtml(t(DATA.ui.prepTitle, lang))}</p>
+      <p class="panel-sub">${escapeHtml(t(DATA.ui.prepWeak, lang))}</p>
+      <ul class="bullets is-say">${bullets(code.split("").map((ch) => t(DATA.prep[ch].weak, lang)))}</ul>
+      <p class="panel-sub">${escapeHtml(t(DATA.ui.prepDig, lang))}</p>
+      <ul class="bullets is-warn">${bullets(code.split("").map((ch) => t(DATA.prep[ch].dig, lang) + " → " + t(DATA.prep[ch].fix, lang)))}</ul>
+      <p class="panel-sub">${escapeHtml(t(DATA.ui.prepWrite, lang))}</p>
+      <ul class="bullets">${bullets(code.split("").map((ch) => t(DATA.prep[ch].write, lang)))}</ul>
+      <p class="panel-note">${escapeHtml(t(DATA.ui.prepNote, lang))}</p>
+    </div>
+
     <div class="panel is-env">
       <p class="panel-label">${escapeHtml(t(DATA.ui.envTitle, lang))}</p>
       <p class="panel-sub">${escapeHtml(t(DATA.ui.envFit, lang))}</p>

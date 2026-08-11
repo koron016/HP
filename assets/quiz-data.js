@@ -84,6 +84,14 @@ window.QUIZ_DATA = {
     teamBalanced:{ ja: "拮抗", en: "Balanced" },
     teamSkewed:  { ja: "偏り", en: "Skewed" },
     teamTakeTest:{ ja: "自分のタイプを調べる", en: "Find your own type" },
+    prepTitle:   { ja: "面接の備え", en: "Interview prep" },
+    prepDig:     { ja: "あなたが突かれる質問", en: "What they will press you on" },
+    prepWeak:    { ja: "「短所は？」への答え方", en: "Answering “what's your weakness?”" },
+    prepWrite:   { ja: "ガクチカで厚く書くところ", en: "What to make the centre of your story" },
+    prepNote: {
+      ja: "短所は、自覚と対策をセットにすると通ります。丸暗記せず、自分の経験に置き換えてから使ってください。",
+      en: "A weakness lands when you pair it with what you now do about it. Rewrite these in your own words before using them."
+    },
     envTitle:    { ja: "企業の見極め方", en: "How to size up a company" },
     envFit:      { ja: "合う環境の条件", en: "Conditions that suit you" },
     envAsk:      { ja: "説明会・面接で聞くこと", en: "Ask them this" },
@@ -180,6 +188,60 @@ window.QUIZ_DATA = {
     B: {
       risk: { ja: "誰も決めないまま止まる。責任の所在が曖昧になる", en: "Nothing gets decided, everything stalls, and nobody owns it" },
       fix:  { ja: "持ち回りでいいので、決める人を必ず1人立てる", en: "Always have one decider, even if the role just rotates" }
+    }
+  },
+
+  /* --- 面接の備え ---
+     4文字それぞれの側から、突かれる質問・短所の答え方・書き方の重心を出します。
+     就活生が実際に詰まるのはここなので、先回りして材料を渡します。 --- */
+  prep: {
+    I: {
+      dig:   { ja: "「その判断に、根拠はありましたか？」", en: "“What was that decision actually based on?”" },
+      fix:   { ja: "勘で決めた場面でも、後から言葉にできる理由を1つ用意しておく", en: "Even for gut calls, have one reason you can put into words afterwards" },
+      weak:  { ja: "勘で動きすぎて、根拠を求められると詰まることがありました。今は決める前に、理由を一度書き出すようにしています。", en: "I moved on instinct and struggled when asked to justify it. Now I write the reasoning down before I decide." },
+      write: { ja: "動き出しの速さが武器。「なぜすぐ動けたのか」を厚く書く", en: "Speed off the mark is your edge — make “why I could move immediately” the centre" }
+    },
+    D: {
+      dig:   { ja: "「情報が足りない場面では、どう決めますか？」", en: "“How do you decide when the information isn't there?”" },
+      fix:   { ja: "決めきれずに機会を逃した経験と、そこから変えたことをセットで話す", en: "Pair a time hesitation cost you something with what you changed after" },
+      weak:  { ja: "材料を集めすぎて、判断が遅れることがありました。今は調べ始める前に、決める日を先に決めています。", en: "I over-researched and decided too late. Now I fix the decision date before I start looking." },
+      write: { ja: "「なぜそうしたか」の根拠部分。ここを書ける人は多くない", en: "The reasoning behind your choices — few applicants can actually write this" }
+    },
+    S: {
+      dig:   { ja: "「チームで動いた経験を教えてください」", en: "“Tell me about a time you worked as part of a team.”" },
+      fix:   { ja: "一人でやり切った話には、周囲に渡した部分を必ず添える", en: "Whenever you describe carrying something alone, name the part you handed over" },
+      weak:  { ja: "一人で抱え込みがちでした。今は着手する前に、誰に何を頼むかを先に決めるようにしています。", en: "I used to absorb everything myself. Now I decide what to hand off before I start." },
+      write: { ja: "自分が何をしたかが明確なのが強み。行動を具体的に書く", en: "Your contribution is unambiguous — write the actions in detail" }
+    },
+    T: {
+      dig:   { ja: "「自分ひとりで成し遂げたことはありますか？」", en: "“What have you achieved on your own?”" },
+      fix:   { ja: "巻き込んだ話の中で、自分が担った部分をはっきり切り出す", en: "Inside the group story, cut out the part that was specifically yours" },
+      weak:  { ja: "人に相談しすぎて、自分で考える時間が減ることがありました。今はまず自分の案を出してから相談しています。", en: "I leaned on others before thinking it through. Now I bring my own draft first, then ask." },
+      write: { ja: "動かした人数と、どう動かしたか。数字を入れると効く", en: "How many people you moved, and how — numbers land here" }
+    },
+    E: {
+      dig:   { ja: "「予定が崩れたとき、どうしましたか？」", en: "“What did you do when the plan fell apart?”" },
+      fix:   { ja: "計画通りにいかなかった経験を、必ず1つ用意しておく", en: "Have one story ready where the plan did not hold" },
+      weak:  { ja: "余裕がある前提で計画を立てがちでした。今は必ず予備日を入れるようにしています。", en: "I planned as if nothing would go wrong. Now I always build in slack." },
+      write: { ja: "準備の段階。ここを書ける学生は少なく、差がつく", en: "The preparation phase — very few applicants write about it" }
+    },
+    L: {
+      dig:   { ja: "「計画的に進めるのは苦手ですか？」", en: "“Are you bad at planning ahead?”" },
+      fix:   { ja: "直前型だと認めたうえで、間に合わせるための自分の工夫を語る", en: "Own the late start, then explain the method that gets you there anyway" },
+      weak:  { ja: "追い込まれてから力が出るタイプで、着手が遅れがちでした。今は中間の締切を自分で作って対処しています。", en: "I peak under pressure, so I started too late. Now I set my own interim deadline." },
+      write: { ja: "土壇場での立て直し。危機と回復はセットで強い", en: "The last-minute recovery — crisis plus rescue is a strong pair" }
+    },
+    C: {
+      dig:   { ja: "「周囲と衝突したことはありますか？」", en: "“Have you ever clashed with the people around you?”" },
+      fix:   { ja: "引っ張った話には、反対意見をどう扱ったかを必ず入れる", en: "In any story where you led, include how you handled the objection" },
+      weak:  { ja: "自分で決めたくなり、意見を聞く前に動くことがありました。今は先に一周、意見を聞くようにしています。", en: "I moved before hearing people out. Now I do one round of listening first." },
+      write: { ja: "決めた場面と、その結果。判断そのものを書く", en: "The moment you decided, and what it produced — write the judgment itself" }
+    },
+    B: {
+      dig:   { ja: "「自分から動いた経験を教えてください」", en: "“Tell me about a time you took the initiative.”" },
+      fix:   { ja: "支えた話の中から、自分の判断で動いた瞬間を1つ切り出す", en: "From the support story, extract one moment that was your own call" },
+      weak:  { ja: "意見はあっても、言い出すのが遅れることがありました。今は会議で必ず一度は発言すると決めています。", en: "I had views but was slow to voice them. Now I make myself speak at least once in every meeting." },
+      write: { ja: "支えた相手がどう変わったか。相手の変化で書くと伝わる", en: "How the person you supported changed — write it through their change" }
     }
   },
 

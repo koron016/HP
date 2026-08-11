@@ -111,6 +111,13 @@
     labelWatch: document.getElementById("label-watch"),
     labelFits: document.getElementById("label-fits"),
     labelPitch: document.getElementById("label-pitch"),
+    prepWeak: document.getElementById("prep-weak"),
+    prepDig: document.getElementById("prep-dig"),
+    prepWrite: document.getElementById("prep-write"),
+    labelPrep: document.getElementById("label-prep"),
+    labelPrepWeak: document.getElementById("label-prepweak"),
+    labelPrepDig: document.getElementById("label-prepdig"),
+    labelPrepWrite: document.getElementById("label-prepwrite"),
     envFit: document.getElementById("env-fit"),
     envAsk: document.getElementById("env-ask"),
     envFlag: document.getElementById("env-flag"),
@@ -151,6 +158,10 @@
     el.labelWatch.textContent = t(DATA.ui.watchOut);
     el.labelFits.textContent = t(DATA.ui.fits);
     el.labelPitch.textContent = t(DATA.ui.pitch);
+    el.labelPrep.textContent = t(DATA.ui.prepTitle);
+    el.labelPrepWeak.textContent = t(DATA.ui.prepWeak);
+    el.labelPrepDig.textContent = t(DATA.ui.prepDig);
+    el.labelPrepWrite.textContent = t(DATA.ui.prepWrite);
     el.labelEnv.textContent = t(DATA.ui.envTitle);
     el.labelEnvFit.textContent = t(DATA.ui.envFit);
     el.labelEnvAsk.textContent = t(DATA.ui.envAsk);
@@ -238,6 +249,7 @@
     el.fits.textContent = t(type.fits);
     el.pitch.textContent = t(type.pitch);
 
+    renderPrep(code);
     renderEnv(code);
     renderAxes(scores);
     renderMatch(code);
@@ -252,6 +264,14 @@
       "&url=" + encodeURIComponent(url);
 
     el.btnCopy.dataset.url = url;
+  }
+
+  /* 面接の備え。突かれる質問には備え方を、短所には答え方をそのまま出す */
+  function renderPrep(code) {
+    var picked = code.split("").map(function (ch) { return DATA.prep[ch]; });
+    fillList(el.prepWeak,  picked.map(function (p) { return t(p.weak); }));
+    fillList(el.prepDig,   picked.map(function (p) { return t(p.dig) + " → " + t(p.fix); }));
+    fillList(el.prepWrite, picked.map(function (p) { return t(p.write); }));
   }
 
   /* 自分の4文字から、企業を見極めるための材料を組み立てる */
