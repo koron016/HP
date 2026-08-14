@@ -111,6 +111,8 @@
     labelWatch: document.getElementById("label-watch"),
     labelFits: document.getElementById("label-fits"),
     labelPitch: document.getElementById("label-pitch"),
+    getsList: document.getElementById("gets-list"),
+    labelGets: document.getElementById("label-gets"),
     chainList: document.getElementById("chain-list"),
     labelChain: document.getElementById("label-chain"),
     prepWeak: document.getElementById("prep-weak"),
@@ -160,6 +162,8 @@
     el.labelWatch.textContent = t(DATA.ui.watchOut);
     el.labelFits.textContent = t(DATA.ui.fits);
     el.labelPitch.textContent = t(DATA.ui.pitch);
+    el.labelGets.textContent = t(DATA.ui.getsTitle);
+    fillList(el.getsList, t(DATA.ui.gets));
     el.labelChain.textContent = t(DATA.ui.chainTitle);
     el.labelPrep.textContent = t(DATA.ui.prepTitle);
     el.labelPrepWeak.textContent = t(DATA.ui.prepWeak);

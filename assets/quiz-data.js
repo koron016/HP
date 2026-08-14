@@ -25,12 +25,12 @@ window.QUIZ_DATA = {
     brand: { ja: "働き方16タイプ診断", en: "WSTI" },
     title: { ja: "働き方16タイプ診断", en: "WSTI — Work Style Type Indicator" },
     tagline: {
-      ja: "何をやるかではなく、どう進めるか。",
-      en: "Not what you do. How you do it."
+      ja: "20問答えると、面接でそのまま使える言葉が出ます。",
+      en: "Twenty questions in, twenty answers out — the ones you actually need in the room."
     },
     description: {
-      ja: "20の質問で、仕事の進め方が16タイプのどれかに分かれます。強み・注意点・自己PRのたたき台まで出ます。",
-      en: "20 questions, 16 work styles. Get your type, your strengths, your blind spots, and a line you can put on a résumé."
+      ja: "20問・3分。自己PRのたたき台、「短所は？」への答え方、面接で深掘りされる3段階、説明会で聞くべきことまで出ます。就活生向け・無料・登録不要。",
+      en: "20 questions, 3 minutes. A line for your resume, an answer to the weakness question, the three levels they will dig to, and what to ask them back. Free, no sign-up."
     },
     hashtag: { ja: "働き方16タイプ診断", en: "WSTI" }
   },
@@ -39,6 +39,23 @@ window.QUIZ_DATA = {
     eyebrow:     { ja: "20の質問・3分", en: "20 questions · 3 minutes" },
     start:       { ja: "診断をはじめる", en: "Start the test" },
     startNote:   { ja: "結果はその場で出ます。登録も入力もありません。", en: "Instant result. No sign-up, nothing to fill in." },
+    getsTitle:   { ja: "結果で出るもの", en: "What you walk away with" },
+    gets: {
+      ja: [
+        "自己PRのたたき台（そのままESに置ける一文）",
+        "「短所は？」への答え方",
+        "面接で深掘りされる3段階と、崩れない答え方",
+        "説明会・面接で聞くこと（そのまま逆質問になります）",
+        "返ってきた答えの読み方と、合わない会社のサイン"
+      ],
+      en: [
+        "A line for your résumé you can paste as-is",
+        "An answer to “what's your weakness?”",
+        "The three levels they will dig to, and how to hold your ground",
+        "Questions to ask them — they double as your reverse questions",
+        "How to read their answer, and the signs a company won't fit"
+      ]
+    },
     back:        { ja: "戻る", en: "Back" },
     resultLabel: { ja: "あなたのタイプは", en: "Your type is" },
     share:       { ja: "結果をXでシェア", en: "Share on X" },

@@ -920,3 +920,14 @@ body::before {
 .ask-read.is-good  .ask-mark { color: var(--low); }
 .ask-read.is-vague .ask-mark { color: var(--mid); }
 .ask-read.is-bad   .ask-mark { color: var(--high); }
+
+/* =========================================================
+   トップの「結果で出るもの」/ What you get, on the start screen
+   ========================================================= */
+
+.gets {
+  margin-bottom: 1.4rem;
+  border-color: var(--accent);
+}
+
+.gets .bullets li { font-size: 0.87rem; line-height: 1.7; }
