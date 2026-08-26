@@ -60,6 +60,8 @@ assets/ogp/<code>-<lang>.png  # GENERATED — 1200x630 per type per language, pl
 team.html, assets/team.js # Team-shape page: axis distribution, gaps, risk/remedy, pair compatibility
 assets/character.js       # Derives each type's character art from its four-letter code
 tools/build.js            # Validates quiz-data.js, then regenerates both generated sets
+tools/daily-post.js       # Composes the day's X post from quiz-data.js — no content of its own
+.github/workflows/daily-post.yml   # 07:00 JST cron: files that post as a GitHub Issue to copy-paste
 ```
 
 ### What separates this from MBTI is the remedy, not the label
@@ -118,6 +120,27 @@ conflict — the team page resolves that by moving the company-facing use outsid
 where employers have an incentive to publish their own distribution and become a distribution
 channel. Do not add scoring, ranking, or pass/fail affordances to this page.
 
+### Distribution posts are composed, not written
+
+X removed its free API tier on 2026-02-06 — new developers get pay-per-use only ($0.015 a post,
+$0.20 with a link), so posting automatically costs money and needs a developer account. The daily
+post workflow sidesteps the API entirely: a cron composes the day's text and opens it as a GitHub
+Issue, and the owner copies it into X. Pressing the button was never the expensive part; deciding
+what to write was.
+
+`tools/daily-post.js` holds **no copy of its own** — every line comes out of `quiz-data.js`
+(`types`, `env.ask`/`read`/`flag`, `chain`, `prep`, `risks`), so the posts cannot drift from the
+site. Six kinds spread evenly across a 56-day rotation; adding material means adding to
+`quiz-data.js`, never adding strings to the composer. Length is measured X's way (full-width
+characters count 2, any URL counts 23) and blocks marked optional are dropped from the end until
+the post fits 280, so an over-long entry degrades instead of being truncated mid-sentence.
+
+**The schedule only fires from the repository's default branch**, which is currently
+`claude/claude-md-mm05xnbhma94ky4k-pifkb` — not this one. Until the owner switches it, the cron is
+inert and only `workflow_dispatch` works. The workflow pins `ref: claude/claude-md-docs-3bgn2h` so
+it checks out the right project either way. GitHub also disables scheduled workflows after 60 days
+of repository inactivity.
+
 ### The three rules that matter
 
 **1. `assets/quiz-data.js` is the single source of truth.** `result/` and `assets/ogp/` are generated
@@ -166,7 +189,10 @@ Market research drove these decisions; do not undo them casually.
 
 ### Verifying changes
 
-There is no test suite; `node tools/build.js` is the closest thing and must pass first. Then drive it:
+There is no test suite; `node tools/build.js` is the closest thing and must pass first. After
+touching `quiz-data.js` or the composer, also run `node tools/daily-post.js --all` and check every
+entry reports at or under 280 — a required block that alone exceeds the limit throws rather than
+shipping a truncated post. Then drive the site:
 open `index.html`, answer all-first-choice (expect `ISEC`) and all-last-choice (expect `DTLB`), switch
 languages mid-result, confirm the strengths/watch-out/fit/résumé panels fill, and confirm share and
 compatibility links resolve to existing pages. Worth
@@ -318,8 +344,12 @@ and `*.log`.
 
 ## Tooling Status
 
-**There are no tests, linters, formatters, or CI workflows in any branch of this repository.** No
-`.github/`, no test suite, no ESLint/Ruff/pytest configuration.
+**There are no tests, linters, or formatters in any branch of this repository.** No test suite, no
+ESLint/Ruff/pytest configuration.
+
+The one workflow that exists is `.github/workflows/daily-post.yml` on
+`claude/claude-md-docs-3bgn2h`. It is a content job, not CI — it runs no checks and gates nothing.
+Nothing runs on push or on a pull request anywhere in this repository.
 
 Do not claim a change is "tested" or report passing checks — there is nothing to run. Verify
 changes by exercising them directly: start the Flask app and drive a generation, or run
