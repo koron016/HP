@@ -135,11 +135,13 @@ site. Six kinds spread evenly across a 56-day rotation; adding material means ad
 characters count 2, any URL counts 23) and blocks marked optional are dropped from the end until
 the post fits 280, so an over-long entry degrades instead of being truncated mid-sentence.
 
-**The schedule only fires from the repository's default branch**, which is currently
-`claude/claude-md-mm05xnbhma94ky4k-pifkb` — not this one. Until the owner switches it, the cron is
-inert and only `workflow_dispatch` works. The workflow pins `ref: claude/claude-md-docs-3bgn2h` so
-it checks out the right project either way. GitHub also disables scheduled workflows after 60 days
-of repository inactivity.
+**Actions only runs workflows that exist on the repository's default branch** — that governs the
+`schedule` trigger and the manual `workflow_dispatch` button alike. The default branch here is
+`claude/claude-md-mm05xnbhma94ky4k-pifkb`, which holds an old `CLAUDE.md` and nothing else, so
+until the owner switches it to this branch the workflow does not run at all and does not appear in
+the Actions tab. That switch is the only setup step. The workflow pins
+`ref: claude/claude-md-docs-3bgn2h` so it checks out this project whichever branch it is launched
+from. GitHub also disables scheduled workflows after 60 days of repository inactivity.
 
 ### The three rules that matter
 

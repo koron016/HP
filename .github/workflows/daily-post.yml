@@ -4,7 +4,8 @@ name: 今日のX投稿文をIssueにする
 # スマホのGitHubアプリに通知が来るので、コピーしてXに貼るだけです。
 #
 # 注意が2つあります。
-#  1. スケジュール実行はデフォルトブランチのワークフローしか動きません。
+#  1. Actions はデフォルトブランチにあるワークフローしか動かしません。
+#     定時実行も手動の Run workflow も同じです。
 #     リポジトリの Settings → General → Default branch を
 #     claude/claude-md-docs-3bgn2h に切り替えてください。
 #  2. 60日間リポジトリに動きがないと、GitHubがスケジュールを止めます。
